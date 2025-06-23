@@ -25,7 +25,8 @@ import {
   Settings,
   LogOut,
   GraduationCap,
-  Building,
+  // Building,
+  FileClock,
   //   Clock,
   BookOpen,
   Users,
@@ -48,11 +49,9 @@ export default function SchoolReservationHeader() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                ClassroomBook(教室予約システム)
+                教室予約システム
               </h1>
-              <p className="text-sm text-muted-foreground">
-                University Classroom Reservations(大学の教室予約)
-              </p>
+              <p className="text-sm text-muted-foreground">教室予約</p>
             </div>
           </div>
 
@@ -62,7 +61,7 @@ export default function SchoolReservationHeader() {
               href="/"
               className="text-sm font-medium hover:text-blue-600 transition-colors"
             >
-              Dashboard(ダッシュボード)
+              ダッシュボード
             </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -70,23 +69,16 @@ export default function SchoolReservationHeader() {
                   variant="ghost"
                   className="text-sm font-medium hover:text-blue-600"
                 >
-                  <Building className="mr-2 h-4 w-4" />
-                  {/* Buildings */}
-                  建物
+                  <FileClock className="mr-2 h-4 w-4" />
+                  ログ
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>
-                  {/* Science Hall */}
-                  科学館
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  {/* Engineering Building */}
-                  工学棟 科学ホール
-                </DropdownMenuItem>
-                <DropdownMenuItem>Liberal Arts Center</DropdownMenuItem>
-                <DropdownMenuItem>Business School</DropdownMenuItem>
-                <DropdownMenuItem>Library Complex</DropdownMenuItem>
+                <DropdownMenuItem>科学館</DropdownMenuItem>
+                <DropdownMenuItem>工学棟 科学ホール</DropdownMenuItem>
+                <DropdownMenuItem>タイトル</DropdownMenuItem>
+                <DropdownMenuItem>タイトル</DropdownMenuItem>
+                <DropdownMenuItem>タイトル</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <Link
