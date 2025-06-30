@@ -1,8 +1,10 @@
 "use client";
 
-import { Input } from "@/app/components/ui/input";
+// import { useState } from "react";
+// import { Input } from "@/app/components/ui/input";
 import { Calendar } from "@/app/components/ui/calendar";
 import { Label } from "@/app/components/ui/label";
+// import { Button } from "@/app/components/ui/button";
 import {
   Select,
   SelectTrigger,
@@ -51,9 +53,9 @@ export default function BookingCalendar() {
             <SelectValue placeholder="Dropdown" />
           </SelectTrigger>
           <SelectContent align="center">
-            <SelectItem value="dropdown">Month and Year</SelectItem>
-            <SelectItem value="dropdown-months">Month Only</SelectItem>
-            <SelectItem value="dropdown-years">Year Only</SelectItem>
+            <SelectItem value="dropdown">月と年</SelectItem>
+            <SelectItem value="dropdown-months">月のみ</SelectItem>
+            <SelectItem value="dropdown-years">年のみ</SelectItem>
           </SelectContent>
         </Select>
       </div>
