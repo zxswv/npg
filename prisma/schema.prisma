@@ -1,22 +1,58 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// npg/prisma/schema.prisma
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js" // Prisma Clientのプロバイダーを指定
+  output   = "../src/generated/prisma" // Prisma Clientの出力先を指定
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "postgresql" // データベースのプロバイダーをPostgreSQLに指定
+  url      = env("DATABASE_URL")  // データベースの接続URLを環境変数から取得
 }
 
+// model Schedule {
+//   id          Int      @id @default(autoincrement())  // ID
+//   date       DateTime         // スケジュールの日付
+//   time       String           // スケジュールの時間
+//   createdAt   DateTime @default(now())  // 作成日時
+//   }
+
+
+// スケジュール、時間枠、予約、部屋のモデルを定義
 model Schedule {
-  id          Int      @id @default(autoincrement())
-  date       DateTime
-  time       String
-  createdAt   DateTime @default(now())
-  }
+  id        Int           @id @default(autoincrement()) // スケジュールのID
+  date      DateTime      // 例: 2025-08-01
+  slots     Slot[]        // 時間枠（1日複数）
+  createdAt DateTime      @default(now()) // 作成日時
+}
+
+// スケジュールの時間枠を定義
+model Slot {
+  id          Int           @id @default(autoincrement())   // 時間枠のID
+  schedule    Schedule      @relation(fields: [scheduleId], references: [id]) // スケジュールとのリレーション
+  scheduleId  Int         // スケジュールのID
+  startTime   DateTime      // 例: 2025-08-01T13:00:00
+  endTime     DateTime      // 例: 2025-08-01T14:00:00
+  reservations Reservation[]  // 予約（1つの時間枠に複数の予約が可能）
+}
+
+// 予約モデルを定義
+model Reservation {
+  id          String        @id @default(uuid())  // 予約のID（UUID形式）
+  slot        Slot          @relation(fields: [slotId], references: [id]) // 時間枠とのリレーション
+  slotId      Int         // 時間枠のID
+  personName  String      // 予約者の名前
+  room        Room          @relation(fields: [roomId], references: [id]) // 部屋とのリレーション
+  roomId      Int           // 部屋のID
+  note        String?       // 備考など
+  createdAt   DateTime      @default(now()) // 予約の作成日時
+  updatedAt   DateTime      @updatedAt  // 予約の更新日時
+}
+
+// 部屋モデルを定義
+model Room {
+  id          Int           @id @default(autoincrement()) // 部屋のID
+  name        String         // 部屋の名前
+  capacity    Int         // 部屋の収容人数
+  reservations Reservation[]  // 部屋に紐づく予約（1つの部屋に複数の予約が可能）
+}

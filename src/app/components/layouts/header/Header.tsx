@@ -7,27 +7,29 @@ const Header = () => {
       <div className="px-4 py-3 md:py-6 lg:px-6">
         <div className="flex items-center space-y-2 md:space-y-0 md:space-x-6">
           <Link href="/" className="text-2xl font-bold tracking-tighter mr-4">
-            Bulletin Board
+            Room Reservation
           </Link>
           <nav className="flex items-center space-x-6 text-sm">
             <Link
-              className="font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              //   className="font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              className="bg-black py-3 px-4 text-white rounded-md font-medium"
               href="/"
             >
-              Home
+              Calendar
             </Link>
             <Link
-              className="font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              //   className="font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              className="bg-black py-3 px-4 text-white rounded-md font-medium"
               href="/about"
             >
-              About
+              History
             </Link>
-            <Link
+            {/* <Link
               className="bg-black py-3 px-4 text-white rounded-md font-medium"
               href="/bbs-posts/create"
             >
               Create Post
-            </Link>
+            </Link> */}
           </nav>
         </div>
       </div>

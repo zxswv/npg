@@ -1,44 +1,43 @@
 # .env.local
 
+```bash
 MAIL_USER=your@gmail.com #メールアドレス
 MAIL_PASS=your-gmail-app-password #Gmail のアプリパスワード
 
 BASE_URL=http://localhost:3100 #API の URL
 JWT_SECRET=super_strong_and_random_secret_key #JWT のシークレットキー
+DATABASE_URL="postgresql://tt:tt@localhost:5432/DB?schema=public" #DB 接続
+```
 
 # 実装予定
-
-ハンバーガーメニュー化
-予定表示
-認証メール送信＆トークン DB 保存の動作確認
-
-ログイン後のカレンダー連携
 
 # 技術スタック
 
 ## 共通
 
-Node.js
-Next.js
+- Node.js
+
+- Next.js
 
 ## フロントエンド
 
-React
+- React
+- [ui.shadcn](https://ui.shadcn.com/)
 
 ## バックエンド
 
 ## データベース
 
-PostgreSQL
+- PostgreSQL
 
 ## ライブラリー
 
-framer-motion
-react-icons
-nodemailer
-npm install nodemailer
-TypeScript を使用している場合は、型定義もインストールする
-npm install --save-dev @types/nodemailer
+- framer-motion
+- react-icons
+- nodemailer
+- npm install nodemailer
+- TypeScript を使用している場合は、型定義もインストールする
+- npm install --save-dev @types/nodemailer
 
 # サーバーコマンド一覧
 
@@ -51,6 +50,19 @@ npm run build # 確認コマンド
 # or
 docker-compose up # 起動コマンド
 # or
+
+```
+
+## prisma コマンド
+
+```bash
+npx prisma studio --port 5555   #確認
+# ro
+npx prisma generate # Prismaクライアントを更新して新しいスキーマを反映
+# or
+npx prisma migrate dev --name init # マイグレーションフォルダの生成
+# or
+npx prisma init # Prismaの初期化
 
 ```
 
@@ -80,19 +92,17 @@ docker rm コンテナID # コンテナの削除
 ## データベース操作
 
 ```bash
-docker compose exec database bash # dockerからMySQLコンテナ(database)に接続
+psql -U tt -d DB # データベースにログイン
 # or
-mysql -u # MySQLにアクセス
+SELECT * FROM テーブル名; # 中身を確認
 # or
-mysql -u root -p # MySQLコンテナ内で、MySQLシェルにrootにログイン
+\dt; # データベースのテーブル一覧を表示する
 # or
 SHOW DATABASES; # データベースの一覧を表示する
 # or
-SHOW TABLES; # データベースのテーブル一覧を表示する
+docker compose exec database bash # dockerからSQLコンテナ(database)に接続
 # or
-USE データベース名; # 使用するデータベースを選択する
-# or
-SHOW TABLES; # テーブルの一覧を表示する
+USE データベース名; # テーブルの一覧を表示する
 # or
 DESCRIBE table_name; # テーブルの構造を表示する
 # or
@@ -101,8 +111,11 @@ docker ps -a
 docker exec -it next.js-test-network-db psql -U tt -d DB  # コンテナ内でユーザー（ロール）を確認
 # or
 docker exec -it <正しいコンテナ名> psql -U postgres -d DB
-
+# or
 docker exec -it next.js-test-network-db ls -l /docker-entrypoint-initdb.d/
+#or
+\q #終了
+#or
 
 ```
 
@@ -121,16 +134,7 @@ IF NOT EXISTS # 同名のデータベースが既に存在する場合にエラ�
 ### SQL の情報
 
 ```bash
-  database: #コンテナ2
-    image: mysql:8.3.0
-    container_name: database #コンテナ名
-      MYSQL_ROOT_PASSWORD: tt #rootパスワード
-      MYSQL_USER: tt #ユーザ名
-      MYSQL_PASSWORD: tt #パスワード
-      MYSQL_DATABASE: Reservation_Site #データベース名
-    volumes:
-      - database:/var/lib/mysql
-      - ./../DB/mysql/:/docker-entrypoint-initdb.d #/init.sql #初期化スクリプト
+
 ```
 
 ### SHOW DATABASES; を実行した際
@@ -185,10 +189,18 @@ IF NOT EXISTS # 同名のデータベースが既に存在する場合にエラ�
 
 # エラー
 
-401 → JWT Cookie が送られていない / 無効（未ログイン）
+<!-- 401 → JWT Cookie が送られていない / 無効（未ログイン）
 
 403 → ロールに CREATE_EVENTS パーミッションがない
 
 400 → text や date が空
 
-500 → サーバー側で何らかのエラー（DB, SQL 文, 予期しない null など）
+500 → サーバー側で何らかのエラー（DB, SQL 文, 予期しない null など） -->
+
+# 参考資料
+
+[Next.js の理解](https://qiita.com/tomy0610/items/f07d586c08a0a2aadb01#%E5%89%8D%E6%8F%90)
+
+[【入門】Prisma を始めるときに押さえておきたいポイントまとめ](https://share.google/bHz3caiBXmmhBTbIK)
+
+![alt text](l1Jg54Y-1.png)

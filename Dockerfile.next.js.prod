@@ -30,7 +30,7 @@ RUN npm install --non-interactive --frozen-lockfile --prod
 # イメージサイズやセキュリティの視点からおすすめのイメージとのこと
 FROM gcr.io/distroless/nodejs20-debian12
 
-WORKDIR /ngo-v2
+WORKDIR /npg
 ENV NODE_ENV production
 
 COPY package.json yarn.lock next.config.mjs ./

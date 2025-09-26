@@ -1,17 +1,18 @@
 services:
-  next.js:
-    build: #コンテナ1
-      context: . #コンテキスト
-      dockerfile: ./Dockerfile.next.js
-    container_name: 2next.js #コンテナ名
-    working_dir: /npg #作業ディレクトリを/appに設定
-    command: npm run dev -- -p 3300 #ポート3100で起動
-    volumes:
-      - /npg #ボリュームをマウント
-    ports:
-      - 3300:3300
-    depends_on:
-      - 2mongodb
+  # next.js:
+  #   build: #コンテナ1
+  #     context: . #コンテキスト
+  #     dockerfile: ./Dockerfile.next.js
+  #   container_name: 2next.js #コンテナ名
+  #   working_dir: /npg #作業ディレクトリを/appに設定
+  #   command: npm run dev -- -p 3300 #ポート3300で起動
+  #   volumes:
+  #     - .:/app #ボリュームをマウント
+  #   ports:
+  #     - "3300:3300"
+  #     # - "5555:5555" #ポート番号
+  #   depends_on:
+  #     - 2mongodb
 
   2mongodb: #コンテナ2
     image: postgres:14 #イメージ名
