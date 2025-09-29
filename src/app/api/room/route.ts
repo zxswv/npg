@@ -17,8 +17,15 @@ export async function POST(req: Request) {
 // GETメソッドでアクセスされた時に動く関数
 export async function GET() {
   // 1. DBから全ユーザーを取得
-  const rooms = await prisma.room.findMany();
-
-  // 2. JSON形式でレスポンスを返す
-  return NextResponse.json(rooms);
+  try {
+    const rooms = await prisma.room.findMany();
+    return NextResponse.json(rooms);
+  } catch (error) {
+    console.error("部屋の取得エラー:", error); //サーバー側でエラーをログに出力
+    // クライアントには具体的なエラー内容は隠蔽し、汎用的なメッセージを返す
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 } //HTTPステータスコード500を返す
+    );
+  }
 }

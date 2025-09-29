@@ -12,6 +12,12 @@ import {
 } from "@/app/components/ui/select";
 import { Button } from "@/app/components/ui/button";
 
+type Room = {
+  id: number;
+  name: string;
+  capacity: number;
+};
+
 // 時間帯の選択肢
 const timeOptions = [
   "09:10",
@@ -24,103 +30,134 @@ const timeOptions = [
 ];
 
 export default function NewSchedulePage() {
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [message, setMessage] = useState("");
-  const [reservedTimes, setReservedTimes] = useState<string[]>([]);
+  // フォームの状態管理
+  const [rooms, setRooms] = useState<Room[]>([]); // 部屋リスト
+  const [selectedRoomId, setSelectedRoomId] = useState(""); // 選択された部屋ID
+  const [date, setDate] = useState(""); // "YYYY-MM-DDTHH:MM"形式
+  const [time, setTime] = useState(""); // "HH:MM"形式
+  const [personName, setPersonName] = useState(""); // 予約者名
+  const [message, setMessage] = useState(""); // フォームの送信結果メッセージ
 
-  // 指定して時間の予約済みの時間を取得
+  // 既に予約されている時間帯
   useEffect(() => {
-    const fetchReservedTimes = async () => {
-      if (!date) return;
-
+    const fetchRooms = async () => {
       try {
-        const res = await fetch(
-          `/api/schedule?date=${encodeURIComponent(date.split("T")[0])}`
-        );
-        const data = await res.json(); // レスポンスのデータを取得
-        const times = data.map((item: { time: string }) => item.time); // 時間のみを抽出
-        console.log("予約済み時間:", times);
-        console.log("予約済み時間のデータ:", data);
-        setReservedTimes(times); // 予約済み時間を更新
+        const res = await fetch("/api/room");
+        const data = await res.json();
+        setRooms(data);
       } catch (error) {
-        console.error("予約済み時間の取得に失敗:", error);
+        console.error("部屋の取得に失敗:", error);
       }
     };
-
-    fetchReservedTimes();
-  }, [date]);
+    fetchRooms();
+  }, []);
 
   // フォーム送信処理
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // 日付と時間のフォーマットチェック
-    const res = await fetch("/api/schedule", {
+    const res = await fetch("/api/reservation", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date, time }),
+      body: JSON.stringify({
+        date,
+        time,
+        roomId: Number(selectedRoomId),
+        personName,
+      }),
     });
 
+    const result = await res.json();
     // レスポンスの処理
     if (res.ok) {
       setMessage("予約を追加しました"); // 成功メッセージ
       setDate(""); // 入力フィールドをリセット
       setTime(""); // 入力フィールドをリセット
-      setReservedTimes([]); // 予約済み時間をリセット
+      setSelectedRoomId(""); // 入力フィールドをリセット
+      setPersonName(""); // 入力フィールドをリセット
     } else {
       const error = await res.json(); // エラーメッセージの取得
       setMessage(error.error || "⚠ エラーが発生しました");
     }
   };
 
-  // 利用可能な時間帯をフィルタリング
-  const availableTimes = timeOptions.filter((t) => !reservedTimes.includes(t));
-
   // 日付と時間のフォーマットを整える
   return (
     <div className="max-w-md mx-auto p-6">
       <h2 className="text-2xl font-semibold mb-4">新規予約</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* --- 部屋選択を追加 --- */}
         <div className="space-y-1">
-          <Label htmlFor="date">日付と時間</Label>
+          <Label htmlFor="room">部屋</Label>
+          <Select
+            onValueChange={setSelectedRoomId}
+            value={selectedRoomId}
+            required
+          >
+            <SelectTrigger id="room">
+              <SelectValue placeholder="部屋を選択" />
+            </SelectTrigger>
+            <SelectContent>
+              {rooms.map((room) => (
+                <SelectItem key={room.id} value={String(room.id)}>
+                  {room.name} (定員: {room.capacity}人)
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* --- 予約者名を追加 --- */}
+        <div className="space-y-1">
+          <Label htmlFor="personName">予約者名</Label>
+          <Input
+            id="personName"
+            type="text"
+            value={personName}
+            onChange={(e) => setPersonName(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* --- 日付入力を date に変更 --- */}
+        <div className="space-y-1">
+          <Label htmlFor="date">日付</Label>
           <Input
             id="date"
-            type="datetime-local"
+            type="date" // datetime-local から date に変更
             value={date}
             onChange={(e) => setDate(e.target.value)}
             required
           />
         </div>
 
+        {/* --- 時間選択 --- */}
         <div className="space-y-1">
           <Label htmlFor="time">時間帯</Label>
-          <Select onValueChange={setTime} value={time}>
+          <Select onValueChange={setTime} value={time} required>
             <SelectTrigger id="time">
               <SelectValue placeholder="時間を選択" />
             </SelectTrigger>
             <SelectContent>
-              {availableTimes.length > 0 ? (
-                availableTimes.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {t}
-                  </SelectItem>
-                ))
-              ) : (
-                <SelectItem disabled value="none">
-                  選択可能な時間がありません
+              {timeOptions.map((t) => (
+                <SelectItem key={t} value={t}>
+                  {t}:00
                 </SelectItem>
-              )}
+              ))}
             </SelectContent>
           </Select>
         </div>
 
-        <Button type="submit" disabled={!date || !time}>
+        <Button
+          type="submit"
+          disabled={!date || !time || !selectedRoomId || !personName}
+        >
           登録
         </Button>
       </form>
 
-      {message && <p className="mt-4 text-sm text-green-600">{message}</p>}
+      {message && <p className="mt-4 text-sm font-medium">{message}</p>}
     </div>
   );
 }

@@ -8,22 +8,16 @@ generator client {
 datasource db {
   provider = "postgresql" // データベースのプロバイダーをPostgreSQLに指定
   url      = env("DATABASE_URL")  // データベースの接続URLを環境変数から取得
+  directUrl = env("DIRECT_URL") // 直接接続用のURLを環境変数から取得
 }
-
-// model Schedule {
-//   id          Int      @id @default(autoincrement())  // ID
-//   date       DateTime         // スケジュールの日付
-//   time       String           // スケジュールの時間
-//   createdAt   DateTime @default(now())  // 作成日時
-//   }
-
 
 // スケジュール、時間枠、予約、部屋のモデルを定義
 model Schedule {
   id        Int           @id @default(autoincrement()) // スケジュールのID
-  date      DateTime      // 例: 2025-08-01
-  slots     Slot[]        // 時間枠（1日複数）
+  date      DateTime      // スケジュールの日付 // 例: 2025-08-01
+  slots     Slot[]        // スケジュールの時間 // 時間枠（1日複数）
   createdAt DateTime      @default(now()) // 作成日時
+  @@unique([date]) // 同じ日のスケジュールが重複しないようにする
 }
 
 // スケジュールの時間枠を定義
@@ -47,12 +41,32 @@ model Reservation {
   note        String?       // 備考など
   createdAt   DateTime      @default(now()) // 予約の作成日時
   updatedAt   DateTime      @updatedAt  // 予約の更新日時
+  // 同じ時間枠に同じ部屋の予約が重複しないようにする
+  @@unique([slotId, roomId])
 }
+
+// シンプルな予約モデルを定義
+// model Reservation {
+//   id         String   @id @default(uuid()) // 予約のID（UUID形式）
+//   personName String   // 予約者の名前
+//   note       String?  // 備考など 
+//   // どの部屋を予約したか
+//   room       Room     @relation(fields: [roomId], references: [id]) // 部屋とのリレーション
+//   roomId     Int      // 部屋のID
+//   // いつ予約したか
+//   startTime  DateTime // 予約開始時間 (例: 2025-08-01T13:00:00Z)
+//   endTime    DateTime // 予約終了時間 (例: 2025-08-01T14:00:00Z)
+//   createdAt  DateTime @default(now()) // 予約の作成日時
+//   updatedAt  DateTime @updatedAt // 予約の更新日時
+//   // 同じ部屋の同じ時間帯に重複予約がないようにするための複合ユニーク制約
+//   @@unique([roomId, startTime])
+// }
+
 
 // 部屋モデルを定義
 model Room {
   id          Int           @id @default(autoincrement()) // 部屋のID
-  name        String         // 部屋の名前
+  name        String        @unique // 部屋の名前
   capacity    Int         // 部屋の収容人数
   reservations Reservation[]  // 部屋に紐づく予約（1つの部屋に複数の予約が可能）
 }

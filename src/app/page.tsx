@@ -3,16 +3,14 @@
 
 import * as React from "react";
 import Booking_Calendar from "./components/Calender/Booking_Calendar";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import NewSchedulePage from "./components/schedule/new/page";
-import RoomList from "./components/roomList/roomList_page";
 
 export default async function Home() {
   return (
     <main>
-      <Booking_Calendar />
+      {/* <Booking_Calendar /> */}
       <NewSchedulePage />
-      <RoomList />
     </main>
   );
 }
