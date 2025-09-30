@@ -1,15 +1,24 @@
-# .env.local
+# .env
 
 ```bash
-MAIL_USER=your@gmail.com #メールアドレス
-MAIL_PASS=your-gmail-app-password #Gmail のアプリパスワード
+DATABASE_URL="postgresql://tt:tt@localhost:5432/DB?schema=public"
 
-BASE_URL=http://localhost:3100 #API の URL
-JWT_SECRET=super_strong_and_random_secret_key #JWT のシークレットキー
-DATABASE_URL="postgresql://tt:tt@localhost:5432/DB?schema=public" #DB 接続
+DIRECT_URL="postgresql://tt:tt@localhost:5432/DB?schema=public"
 ```
 
 # 実装予定
+
+・部屋を選択した際に 24 時間グラフを使って視覚的に一目で空いている時間が分るやつ
+・借りれない時間帯を選択できないようにする
+・登録情報を完成させる
+
+## 実装検討
+
+・ユーザー管理
+・権限管理
+・授業登録画面
+・掲示板
+・インターネットアクセス
 
 # 技術スタック
 
@@ -40,6 +49,16 @@ DATABASE_URL="postgresql://tt:tt@localhost:5432/DB?schema=public" #DB 接続
 - npm install --save-dev @types/nodemailer
 
 # サーバーコマンド一覧
+
+## prisma コマンド
+
+```bash
+npm run db:seed #データベースに必要なデータを作成する
+# or
+npx prisma studio #prismaを直接操作確認できる
+# or
+npx prisma generate #スキーマやモデルを変えた際反映させるコマンド
+```
 
 ## 起動コマンド
 

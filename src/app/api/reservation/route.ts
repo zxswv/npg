@@ -18,28 +18,51 @@ export async function POST(req: Request) {
     }
 
     // dateとtimeを組み合わせてDateオブジェクトを作成
-    const targetDate = new Date(date);
-    targetDate, setUTCHours(0, 0, 0, 0); // 日付部分のみを比較するために時刻をリセット
+    const targetDate = new Date(`${date}T00:00:00.000Z`);
+    // targetDate.setUTCHours(0, 0, 0, 0); // 日付部分のみを比較するために時刻をリセット
+
+    // console.log("--- デバッグ開始 ---");
+    // console.log("フロントエンドから受け取った日付:", date);
+    // console.log("検索するScheduleの日付 (UTC):", targetDate.toISOString());
 
     // 指定された日にちのスケジュールを取得
-    let schedule = await prisma.schedule.findUnique({
+    const schedule = await prisma.schedule.findUnique({
       where: { date: targetDate },
     });
 
     // スケジュールが存在しない場合はエラーを返す
     if (!schedule) {
+      // console.log("エラー: Scheduleが見つかりませんでした。");
+      // console.log("--- デバッグ終了 ---");
       return NextResponse.json(
-        { error: "指定された日にちのスケジュールが存在しません" },
-        { status: 400 }
+        {
+          error:
+            "指定された日にちのスケジュールが存在しません（管理者に連絡してください）",
+        },
+        { status: 404 }
       );
     }
 
-    // 指定された日にちと時間、部屋で既に予約が存在するかチェック
-    const startTime = new Date(date);
-    const [hour, minute] = time.split(":").map(Number);
-    startTime.setHours(hour, minute, 0, 0); // 時刻を設定
+    console.log("成功: Scheduleが見つかりました:", schedule);
 
-    // 既に同じ部屋・同じ時間枠で予約が存在するか確認
+    // time文字列を使ってスロットの開始時間を作成
+    // 例: "14:00" -> "2023-10-01T14:00:00.000Z"
+    const startTimeString = `${date}T${time}:00.000Z`;
+    const startTime = new Date(startTimeString);
+
+    // console.log("検索するSlotの開始時間 (UTC):", startTime.toISOString());
+    // console.log("検索するSlotのscheduleId:", schedule.id);
+
+    // 指定されたスケジュールIDと開始時間でスロットを検索
+    // const allSlotsForSchedule = await prisma.slot.findMany({
+    //   where: { scheduleId: schedule.id },
+    // });
+    // console.log(
+    //   "データベース内の該当Scheduleの全スロット:",
+    //   allSlotsForSchedule.map((s) => s.startTime.toISOString())
+    // );
+
+    // 指定されたスケジュールIDと開始時間でスロットを検索
     const slot = await prisma.slot.findFirst({
       where: {
         scheduleId: schedule.id,
@@ -48,6 +71,24 @@ export async function POST(req: Request) {
     });
 
     // スロットが存在しない場合はエラーを返す
+    if (!slot) {
+      // console.log("エラー: Slotが見つかりませんでした。");
+      // console.log("--- デバッグ終了 ---");
+      console.error(
+        `Slot not found for scheduleId: ${
+          schedule.id
+        } and startTime: ${startTime.toISOString()}`
+      );
+      return NextResponse.json(
+        { error: `指定された時間枠(${time})が見つかりません` },
+        { status: 404 }
+      );
+    }
+
+    // console.log("成功: Slotが見つかりました:", slot);
+    // console.log("--- デバッグ終了 ---");
+
+    // 予約を作成
     const newReservation = await prisma.reservation.create({
       data: {
         personName,
@@ -79,13 +120,36 @@ export async function POST(req: Request) {
   }
 }
 
-// // GET: 予約取得（部屋・スロット含む）
-// export async function GET() {
-//   const reservations = await prisma.reservation.findMany({
-//     include: {
-//       slot: true,
-//       room: true,
-//     },
-//   });
-//   return NextResponse.json(reservations);
-// }
+// GET: 予約取得（部屋・スロット含む）
+export async function GET() {
+  try {
+    const reservations = await prisma.reservation.findMany({
+      // 予約が作成された順（新しいものが先頭）に並び替え
+      orderBy: {
+        createdAt: "desc",
+      },
+      // 関連するデータも一緒に取得する
+      include: {
+        // Roomモデルからnameだけを取得
+        room: {
+          select: {
+            name: true,
+          },
+        },
+        // SlotモデルからstartTimeだけを取得
+        slot: {
+          select: {
+            startTime: true,
+          },
+        },
+      },
+    });
+    return NextResponse.json(reservations);
+  } catch (error) {
+    console.error("予約取得エラー:", error);
+    return NextResponse.json(
+      { error: "予約の取得に失敗しました" },
+      { status: 500 }
+    );
+  }
+}

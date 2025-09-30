@@ -20,7 +20,7 @@ const Header = () => {
             <Link
               //   className="font-medium text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
               className="bg-black py-3 px-4 text-white rounded-md font-medium"
-              href="/History"
+              href="/history"
             >
               ログ
             </Link>

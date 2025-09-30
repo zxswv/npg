@@ -5,12 +5,14 @@ import * as React from "react";
 import Booking_Calendar from "./components/Calender/Booking_Calendar";
 import { prisma } from "@/lib/prisma";
 import NewSchedulePage from "./components/schedule/new/page";
+import ReservationsPage from "./components/reservations/page";
 
 export default async function Home() {
   return (
     <main>
-      {/* <Booking_Calendar /> */}
-      <NewSchedulePage />
+      {/* <Booking_Calendar />
+      <NewSchedulePage /> */}
+      <ReservationsPage />
     </main>
   );
 }

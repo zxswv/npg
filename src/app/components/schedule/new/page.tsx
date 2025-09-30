@@ -1,3 +1,4 @@
+// app/components/schedule/new/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -29,11 +30,19 @@ const timeOptions = [
   "19:50",
 ];
 
-export default function NewSchedulePage() {
+// カレンダーから選択された日付を受け取るためのprops
+interface ReservationFormProps {
+  selectedDate: Date | undefined;
+  onDateChange: (date: Date | undefined) => void;
+}
+
+export default function NewSchedulePage({
+  selectedDate,
+  onDateChange,
+}: ReservationFormProps) {
   // フォームの状態管理
   const [rooms, setRooms] = useState<Room[]>([]); // 部屋リスト
   const [selectedRoomId, setSelectedRoomId] = useState(""); // 選択された部屋ID
-  const [date, setDate] = useState(""); // "YYYY-MM-DDTHH:MM"形式
   const [time, setTime] = useState(""); // "HH:MM"形式
   const [personName, setPersonName] = useState(""); // 予約者名
   const [message, setMessage] = useState(""); // フォームの送信結果メッセージ
@@ -52,33 +61,58 @@ export default function NewSchedulePage() {
     fetchRooms();
   }, []);
 
+  // 日付を "YYYY-MM-DD" 形式の文字列に変換する
+  const dateString = selectedDate?.toISOString().split("T")[0] ?? ""; // "YYYY-MM-DD"形式の日付文字列
+
   // フォーム送信処理
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!dateString) {
+      setMessage("⚠ 日付を選択してください");
+      return;
+    }
 
-    // 日付と時間のフォーマットチェック
-    const res = await fetch("/api/reservation", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        date,
-        time,
-        roomId: Number(selectedRoomId),
-        personName,
-      }),
-    });
+    const reservationData = {
+      date: dateString,
+      time,
+      roomId: Number(selectedRoomId),
+      personName,
+    };
 
-    const result = await res.json();
-    // レスポンスの処理
-    if (res.ok) {
-      setMessage("予約を追加しました"); // 成功メッセージ
-      setDate(""); // 入力フィールドをリセット
-      setTime(""); // 入力フィールドをリセット
-      setSelectedRoomId(""); // 入力フィールドをリセット
-      setPersonName(""); // 入力フィールドをリセット
-    } else {
-      const error = await res.json(); // エラーメッセージの取得
-      setMessage(error.error || "⚠ エラーが発生しました");
+    // デバッグ用: 送信するデータが正しいかコンソールで確認
+    // console.log("送信するデータ:", reservationData);
+
+    try {
+      const res = await fetch("/api/reservation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reservationData),
+      });
+
+      // レスポンスのボディを **一度だけ** 読み込む
+      const result = await res.json();
+
+      // res.ok (ステータスコードが200番台) かどうかで成功/失敗を判断
+      if (!res.ok) {
+        // 失敗した場合 (400, 500エラーなど)
+        // 読み込んだresultからエラーメッセージを取り出す
+        throw new Error(result.error || `サーバーエラー: ${res.status}`);
+      }
+
+      // 成功した場合
+      setMessage("予約を追加しました！");
+      // フォームをリセット
+      setTime("");
+      setSelectedRoomId("");
+      setPersonName("");
+    } catch (error) {
+      // ネットワークエラーや、上記でthrowしたエラーをキャッチ
+      console.error("フォーム送信エラー:", error);
+      if (error instanceof Error) {
+        setMessage(`⚠ ${error.message}`);
+      } else {
+        setMessage("⚠ 不明なエラーが発生しました");
+      }
     }
   };
 
@@ -126,8 +160,13 @@ export default function NewSchedulePage() {
           <Input
             id="date"
             type="date" // datetime-local から date に変更
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={dateString} // カレンダーから選択された日付を表示
+            onChange={(e) => {
+              const newDate = e.target.value
+                ? new Date(e.target.value)
+                : undefined;
+              onDateChange(newDate);
+            }}
             required
           />
         </div>
@@ -142,7 +181,7 @@ export default function NewSchedulePage() {
             <SelectContent>
               {timeOptions.map((t) => (
                 <SelectItem key={t} value={t}>
-                  {t}:00
+                  {t}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -151,7 +190,7 @@ export default function NewSchedulePage() {
 
         <Button
           type="submit"
-          disabled={!date || !time || !selectedRoomId || !personName}
+          disabled={!selectedDate || !time || !selectedRoomId || !personName}
         >
           登録
         </Button>

@@ -28,127 +28,68 @@ async function main() {
   console.log("Cleaned up existing data.");
 
   // 部屋データの作成
-  const room_1101 = await prisma.room.create({
-    data: { name: "1101", capacity: 10 },
-  });
-  const room_1102 = await prisma.room.create({
-    data: { name: "1102", capacity: 10 },
-  });
-  const room_1103 = await prisma.room.create({
-    data: { name: "1103", capacity: 10 },
-  });
-  const room_1104 = await prisma.room.create({
-    data: { name: "1104", capacity: 10 },
-  });
-  const room_1105 = await prisma.room.create({
-    data: { name: "1105", capacity: 10 },
-  });
-  const room_1106 = await prisma.room.create({
-    data: { name: "1106", capacity: 10 },
-  });
-  const room_1107 = await prisma.room.create({
-    data: { name: "1107", capacity: 10 },
-  });
-  const room_1108 = await prisma.room.create({
-    data: { name: "1108", capacity: 10 },
-  });
-  const room_1109 = await prisma.room.create({
-    data: { name: "1109", capacity: 10 },
-  });
-  const room_1110 = await prisma.room.create({
-    data: { name: "1110", capacity: 10 },
-  });
-  const room_1111 = await prisma.room.create({
-    data: { name: "1111", capacity: 10 },
-  });
-  const room_1112 = await prisma.room.create({
-    data: { name: "1112", capacity: 10 },
-  });
-  const room_1113 = await prisma.room.create({
-    data: { name: "1113", capacity: 10 },
-  });
-  const room_1001 = await prisma.room.create({
-    data: { name: "1001", capacity: 10 },
-  });
-  const room_1002 = await prisma.room.create({
-    data: { name: "1002", capacity: 10 },
-  });
-  const room_1003 = await prisma.room.create({
-    data: { name: "1003", capacity: 10 },
-  });
-  const room_1004 = await prisma.room.create({
-    data: { name: "1004", capacity: 10 },
-  });
-  const room_1005 = await prisma.room.create({
-    data: { name: "1005", capacity: 10 },
-  });
-  const room_1006 = await prisma.room.create({
-    data: { name: "1006", capacity: 10 },
-  });
-  const room_1007 = await prisma.room.create({
-    data: { name: "1007", capacity: 10 },
-  });
-  const room_1008 = await prisma.room.create({
-    data: { name: "1008", capacity: 10 },
-  });
-  const room_1009 = await prisma.room.create({
-    data: { name: "1009", capacity: 10 },
-  });
-  const room_1010 = await prisma.room.create({
-    data: { name: "1010", capacity: 10 },
-  });
-  const room_1011 = await prisma.room.create({
-    data: { name: "1011", capacity: 10 },
-  });
-  const room_1012 = await prisma.room.create({
-    data: { name: "1012", capacity: 10 },
-  });
-  const room_1013 = await prisma.room.create({
-    data: { name: "1013", capacity: 10 },
-  });
-  const room_1014 = await prisma.room.create({
-    data: { name: "1014", capacity: 10 },
+  const roomsToCreate = [
+    { name: "1101", capacity: 10 },
+    { name: "1102", capacity: 10 },
+    { name: "1103", capacity: 10 },
+    { name: "1104", capacity: 10 },
+    { name: "1105", capacity: 10 },
+    { name: "1106", capacity: 10 },
+    { name: "1107", capacity: 10 },
+    { name: "1108", capacity: 10 },
+    { name: "1109", capacity: 10 },
+    { name: "1110", capacity: 10 },
+    { name: "1111", capacity: 10 },
+    { name: "1112", capacity: 10 },
+    { name: "1113", capacity: 10 },
+    { name: "1001", capacity: 10 },
+    { name: "1002", capacity: 10 },
+    { name: "1003", capacity: 10 },
+    { name: "1004", capacity: 10 },
+    { name: "1005", capacity: 10 },
+    { name: "1006", capacity: 10 },
+    { name: "1007", capacity: 10 },
+    { name: "1008", capacity: 10 },
+    { name: "1009", capacity: 10 },
+    { name: "1010", capacity: 10 },
+    { name: "1011", capacity: 10 },
+    { name: "1012", capacity: 10 },
+    { name: "1013", capacity: 10 },
+    { name: "1014", capacity: 10 },
+  ];
+
+  // 部屋データを一括で作成
+  await prisma.room.createMany({
+    data: roomsToCreate,
   });
   console.log("Created rooms.");
 
   // 14日分のスケジュールとスロットを作成
   const today = new Date();
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 30; i++) {
     const currentDate = new Date(today);
     currentDate.setDate(today.getDate() + i);
-    currentDate.setHours(0, 0, 0, 0); // 時間を00:00に設定
+
+    const dateString = currentDate.toISOString().split("T")[0]; // "YYYY-MM-DD"形式の文字列
+    const scheduleDate = new Date(`${dateString}T00:00:00.000Z`); // UTCの午前0時に設定
 
     const schedule = await prisma.schedule.create({
       data: {
-        date: currentDate,
+        date: scheduleDate,
+        slots: {
+          create: timeSlots.map((time) => {
+            const [hour, minute] = time.split(":").map(Number);
+            const startTime = new Date(scheduleDate);
+            startTime.setUTCHours(hour, minute);
+            const endTime = new Date(startTime);
+            endTime.setMinutes(startTime.getMinutes() + classDurationMinutes);
+            return { startTime, endTime };
+          }),
+        },
       },
     });
-
-    const slotsToCreate = timeSlots.map((time) => {
-      const [hour, minute] = time.split(":").map(Number);
-
-      const startTime = new Date(currentDate);
-      startTime.setUTCHours(hour, minute, 0, 0);
-
-      const endTime = new Date(startTime);
-      endTime.setMinutes(startTime.getMinutes() + classDurationMinutes);
-
-      return {
-        scheduleId: schedule.id,
-        startTime: startTime,
-        endTime: endTime,
-      };
-    });
-
-    await prisma.slot.createMany({
-      data: slotsToCreate,
-    });
-
-    console.log(
-      `Created schedule and slots for ${
-        currentDate.toISOString().split("T")[0]
-      }`
-    );
+    console.log(`Created schedule and slots for ${dateString}`);
+    console.log(`Created schedule and slots for ${dateString}`);
   }
 
   console.log("Seeding finished.");

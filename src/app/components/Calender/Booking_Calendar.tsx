@@ -14,51 +14,24 @@ import {
 } from "@/app/components/ui/select";
 import React from "react";
 
-export default function BookingCalendar() {
-  const [dropdown, setDropdown] =
-    React.useState<React.ComponentProps<typeof Calendar>["captionLayout"]>(
-      "dropdown"
-    );
-  const [date, setDate] = React.useState<Date | undefined>(
-    new Date(2025, 5, 12)
-  );
+interface BookingCalendarProps {
+  selectedDate: Date | undefined;
+  onDateChange: (date: Date | undefined) => void;
+}
+
+export default function BookingCalendar({
+  selectedDate,
+  onDateChange,
+}: BookingCalendarProps) {
+  // このコンポーネント自身のstateは不要になったので削除
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-center p-4">
-      <Calendar
-        mode="single"
-        defaultMonth={date}
-        selected={date}
-        onSelect={setDate}
-        captionLayout={dropdown}
-        className="rounded-lg border shadow-sm w-[500px] h-[500px] text-lg"
-      />
-      <div className="flex flex-col gap-3">
-        <Label htmlFor="dropdown" className="px-1">
-          Dropdown
-        </Label>
-        <Select
-          value={dropdown}
-          onValueChange={(value) =>
-            setDropdown(
-              value as React.ComponentProps<typeof Calendar>["captionLayout"]
-            )
-          }
-        >
-          <SelectTrigger
-            id="dropdown"
-            size="sm"
-            className="bg-background w-full"
-          >
-            <SelectValue placeholder="Dropdown" />
-          </SelectTrigger>
-          <SelectContent align="center">
-            <SelectItem value="dropdown">月と年</SelectItem>
-            <SelectItem value="dropdown-months">月のみ</SelectItem>
-            <SelectItem value="dropdown-years">年のみ</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
+    // カレンダーのサイズを少し調整
+    <Calendar
+      mode="single"
+      selected={selectedDate} // 親から渡された日付を表示
+      onSelect={onDateChange} // 親の更新関数を呼び出す
+      className="bg-background w-full"
+    />
   );
 }
