@@ -41,6 +41,19 @@ export default function NewSchedulePage({
   onDateChange,
 }: ReservationFormProps) {
   // フォームの状態管理
+  const formatDate = (date: Date | undefined): string => {
+    if (!date) return "";
+
+    // エラー回避のためコメントアウト
+    // タイムゾーン問題を回避するため、ローカルの年月日を直接取得する
+    const year = date.getFullYear();
+    // getMonth()は0始まりなので+1する。padStartで2桁に揃える (例: 1 -> "01")
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+  const dateString = formatDate(selectedDate); // "YYYY-MM-DD"形式の日付文字列
   const [rooms, setRooms] = useState<Room[]>([]); // 部屋リスト
   const [selectedRoomId, setSelectedRoomId] = useState(""); // 選択された部屋ID
   const [time, setTime] = useState(""); // "HH:MM"形式
@@ -60,9 +73,6 @@ export default function NewSchedulePage({
     };
     fetchRooms();
   }, []);
-
-  // 日付を "YYYY-MM-DD" 形式の文字列に変換する
-  const dateString = selectedDate?.toISOString().split("T")[0] ?? ""; // "YYYY-MM-DD"形式の日付文字列
 
   // フォーム送信処理
   const handleSubmit = async (e: React.FormEvent) => {
@@ -162,9 +172,13 @@ export default function NewSchedulePage({
             type="date" // datetime-local から date に変更
             value={dateString} // カレンダーから選択された日付を表示
             onChange={(e) => {
-              const newDate = e.target.value
-                ? new Date(e.target.value)
-                : undefined;
+              //タイムゾーン問題を回避するため、ユーザーが選択した日付文字列を直接使用してDateオブジェクトを作成
+              if (!e.target.value) {
+                onDateChange(undefined);
+                return;
+              }
+              //  "YYYY-MM-DD" の文字列をUTCとして解釈し、Dateオブジェクトを生成
+              const newDate = new Date(`${e.target.value}T00:00:00.000Z`);
               onDateChange(newDate);
             }}
             required

@@ -6,11 +6,17 @@ DATABASE_URL="postgresql://tt:tt@localhost:5432/DB?schema=public"
 DIRECT_URL="postgresql://tt:tt@localhost:5432/DB?schema=public"
 ```
 
+# バグ
+
+```bash
+・カレンダーで選択した日付の一日前になる # 修正済み
+```
+
 # 実装予定
 
 ・部屋を選択した際に 24 時間グラフを使って視覚的に一目で空いている時間が分るやつ
 ・借りれない時間帯を選択できないようにする
-・登録情報を完成させる
+・部屋の登録情報を完成させる
 
 ## 実装検討
 

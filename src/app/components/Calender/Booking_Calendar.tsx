@@ -5,13 +5,7 @@
 import { Calendar } from "@/app/components/ui/calendar";
 import { Label } from "@/app/components/ui/label";
 // import { Button } from "@/app/components/ui/button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/app/components/ui/select";
+import {} from "@/app/components/ui/select";
 import React from "react";
 
 interface BookingCalendarProps {
@@ -23,8 +17,6 @@ export default function BookingCalendar({
   selectedDate,
   onDateChange,
 }: BookingCalendarProps) {
-  // このコンポーネント自身のstateは不要になったので削除
-
   return (
     // カレンダーのサイズを少し調整
     <Calendar
