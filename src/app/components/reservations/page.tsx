@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import BookingCalendar from "@/app/components/Calender/Booking_Calendar"; // カレンダーコンポーネント
+// import BookingCalendar from "@/app/components/Calender/Booking_Calendar"; // カレンダーコンポーネント
 import NewSchedulePage from "@/app/components/schedule/new/page";
 import {
   Card,
@@ -31,10 +31,10 @@ export default function ReservationsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-grow flex items-center justify-center">
-            <BookingCalendar
+            {/* <BookingCalendar
               selectedDate={selectedDate}
               onDateChange={setSelectedDate}
-            />
+            /> */}
           </CardContent>
         </Card>
 

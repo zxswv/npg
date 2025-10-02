@@ -1,11 +1,3 @@
-# .env
-
-```bash
-DATABASE_URL="postgresql://tt:tt@localhost:5432/DB?schema=public"
-
-DIRECT_URL="postgresql://tt:tt@localhost:5432/DB?schema=public"
-```
-
 # バグ
 
 ```bash
@@ -237,3 +229,24 @@ IF NOT EXISTS # 同名のデータベースが既に存在する場合にエラ�
 [【入門】Prisma を始めるときに押さえておきたいポイントまとめ](https://share.google/bHz3caiBXmmhBTbIK)
 
 ![alt text](l1Jg54Y-1.png)
+
+# セットアップする際のコマンド
+
+# .env
+
+```bash
+DATABASE_URL="postgresql://tt:tt@localhost:5432/DB?schema=public"
+
+DIRECT_URL="postgresql://tt:tt@localhost:5432/DB?schema=public"
+```
+
+```bash
+.envを作成
+npm install (必要なパッケージをインストール)
+
+npx prisma migrate dev (データベースにテーブルを作成)
+
+npm run db:seed (初期データを投入)
+
+npm run dev (アプリケーションを起動)
+```

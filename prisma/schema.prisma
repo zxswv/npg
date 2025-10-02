@@ -66,6 +66,7 @@ model Reservation {
 // 部屋モデルを定義
 model Room {
   id          Int           @id @default(autoincrement()) // 部屋のID
+  number      Int           @unique // 部屋の番号
   name        String        @unique // 部屋の名前
   capacity    Int         // 部屋の収容人数
   reservations Reservation[]  // 部屋に紐づく予約（1つの部屋に複数の予約が可能）
