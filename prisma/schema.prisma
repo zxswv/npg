@@ -35,10 +35,18 @@ model Reservation {
   id          String        @id @default(uuid())  // 予約のID（UUID形式）
   slot        Slot          @relation(fields: [slotId], references: [id]) // 時間枠とのリレーション
   slotId      Int         // 時間枠のID
-  personName  String      // 予約者の名前
   room        Room          @relation(fields: [roomId], references: [id]) // 部屋とのリレーション
   roomId      Int           // 部屋のID
+
+  // -- 必須項目 --
+  personName  String      // 予約者の名前
+  grade       String      // 学年
+  className   String      // クラス・番号
+  // -- 非必須項目 --
+  purpose     String?       // 利用目的
+  numberOfUsers Int?       // 利用人数
   note        String?       // 備考など
+
   createdAt   DateTime      @default(now()) // 予約の作成日時
   updatedAt   DateTime      @updatedAt  // 予約の更新日時
   // 同じ時間枠に同じ部屋の予約が重複しないようにする
@@ -66,8 +74,8 @@ model Reservation {
 // 部屋モデルを定義
 model Room {
   id          Int           @id @default(autoincrement()) // 部屋のID
-  number      Int           @unique // 部屋の番号
-  name        String        @unique // 部屋の名前
+  number      String        @unique // 部屋の番号
+  name        String         // 部屋の名前
   capacity    Int         // 部屋の収容人数
   reservations Reservation[]  // 部屋に紐づく予約（1つの部屋に複数の予約が可能）
 }

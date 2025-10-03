@@ -8,9 +8,19 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     // リクエストボディから必要なデータを取得
-    const { date, time, roomId, personName } = await req.json();
+    const {
+      date,
+      time,
+      roomId,
+      personName,
+      grade,
+      className,
+      purpose,
+      numberOfUsers,
+      note,
+    } = await req.json();
     // 必須項目のチェック
-    if (!date || !time || !roomId || !personName) {
+    if (!date || !time || !roomId || !personName || !grade || !className) {
       return NextResponse.json(
         { error: "必要項目が足りていません" },
         { status: 400 }
@@ -88,10 +98,22 @@ export async function POST(req: Request) {
     // console.log("成功: Slotが見つかりました:", slot);
     // console.log("--- デバッグ終了 ---");
 
+    // numberOfUsersがnullまたは空文字の場合はnullに設定、それ以外は数値に変換
+    const processedNumberOfUsers =
+      numberOfUsers !== null && numberOfUsers !== ""
+        ? Number(numberOfUsers)
+        : null;
+
     // 予約を作成
     const newReservation = await prisma.reservation.create({
       data: {
         personName,
+        grade,
+        className,
+        purpose: purpose || null,
+        numberOfUsers: processedNumberOfUsers,
+        note: note || null,
+        // 外部キー
         roomId,
         slotId: slot.id,
       },
@@ -114,7 +136,7 @@ export async function POST(req: Request) {
     // その他のエラー処理
     console.error("予約作成エラー:", error);
     return NextResponse.json(
-      { error: "予約の作成に失敗しました" },
+      { error: "予約の作成に失敗しました", details: String(error) },
       { status: 500 }
     );
   }

@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { Label } from "@/app/components/ui/label";
 import { Input } from "@/app/components/ui/input";
+import { Textarea } from "@/app/components/ui/textarea";
 import {
   Select,
   SelectTrigger,
@@ -17,6 +18,7 @@ type Room = {
   id: number;
   name: string;
   capacity: number;
+  number: string;
 };
 
 // 時間帯の選択肢
@@ -29,6 +31,26 @@ const timeOptions = [
   "18:10",
   "19:50",
 ];
+const gradeOptions = ["1年", "2年", "3年", "研究生"];
+const classOptions = [
+  "ヘアメイク",
+  "フィッシング",
+  "ミュージック",
+  "バスケット",
+  "パフォーミングアーツ",
+  "e-Sports",
+  "ゲーム",
+  "マンガ・イラスト",
+  "IT",
+  "動画クリエーター",
+  "チャイルドケア",
+  "スポーツ",
+  "デザイン",
+  "高校",
+];
+// 案の一つ 選択式にする
+// 利用人数の選択肢
+// const usersOptions = Array.from({ length: 50 }, (_, i) => (i + 1).toString());
 
 // カレンダーから選択された日付を受け取るためのprops
 interface ReservationFormProps {
@@ -36,11 +58,24 @@ interface ReservationFormProps {
   onDateChange: (date: Date | undefined) => void;
 }
 
-export default function NewSchedulePage({
+export default function ReservationForm({
   selectedDate,
   onDateChange,
 }: ReservationFormProps) {
   // フォームの状態管理
+  const [rooms, setRooms] = useState<Room[]>([]); // 部屋リスト
+  const [selectedRoomId, setSelectedRoomId] = useState(""); // 選択された部屋ID
+  const [time, setTime] = useState(""); // "HH:MM"形式
+  const [personName, setPersonName] = useState(""); // 予約者名
+  const [message, setMessage] = useState(""); // フォームの送信結果メッセージ
+  // 追加のフォームフィールド（必要に応じて使用）
+  const [grade, setGrade] = useState("");
+  const [className, setClassName] = useState("");
+  const [purpose, setPurpose] = useState("");
+  const [numberOfUsers, setNumberOfUsers] = useState("");
+  const [note, setNote] = useState("");
+
+  // 日付のフォーマットを "YYYY-MM-DD" に変換する関数
   const formatDate = (date: Date | undefined): string => {
     if (!date) return "";
 
@@ -54,11 +89,6 @@ export default function NewSchedulePage({
     return `${year}-${month}-${day}`;
   };
   const dateString = formatDate(selectedDate); // "YYYY-MM-DD"形式の日付文字列
-  const [rooms, setRooms] = useState<Room[]>([]); // 部屋リスト
-  const [selectedRoomId, setSelectedRoomId] = useState(""); // 選択された部屋ID
-  const [time, setTime] = useState(""); // "HH:MM"形式
-  const [personName, setPersonName] = useState(""); // 予約者名
-  const [message, setMessage] = useState(""); // フォームの送信結果メッセージ
 
   // 既に予約されている時間帯
   useEffect(() => {
@@ -87,6 +117,12 @@ export default function NewSchedulePage({
       time,
       roomId: Number(selectedRoomId),
       personName,
+      grade,
+      className,
+      purpose,
+      // 人数が入力されていれば数値に、されていなければnullに
+      numberOfUsers: numberOfUsers ? Number(numberOfUsers) : null,
+      note,
     };
 
     // デバッグ用: 送信するデータが正しいかコンソールで確認
@@ -115,6 +151,11 @@ export default function NewSchedulePage({
       setTime("");
       setSelectedRoomId("");
       setPersonName("");
+      setGrade("");
+      setClassName("");
+      setPurpose("");
+      setNumberOfUsers("");
+      setNote("");
     } catch (error) {
       // ネットワークエラーや、上記でthrowしたエラーをキャッチ
       console.error("フォーム送信エラー:", error);
@@ -145,11 +186,47 @@ export default function NewSchedulePage({
             <SelectContent>
               {rooms.map((room) => (
                 <SelectItem key={room.id} value={String(room.id)}>
-                  {room.name} (定員: {room.capacity}人)
+                  {room.name} ({room.number}) - 定員: {room.capacity}人
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        {/* --- 学年選択を追加 --- */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <Label htmlFor="grade">学年</Label>
+            <Select onValueChange={setGrade} value={grade} required>
+              <SelectTrigger id="grade">
+                <SelectValue placeholder="学年を選択" />
+              </SelectTrigger>
+              <SelectContent>
+                {gradeOptions.map((g) => (
+                  <SelectItem key={g} value={g}>
+                    {g}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* --- クラス選択を追加 --- */}
+          <div className="space-y-1">
+            <Label htmlFor="className">ガレッジ名</Label>
+            <Select onValueChange={setClassName} value={className} required>
+              <SelectTrigger id="className">
+                <SelectValue placeholder="ガレッジを選択" />
+              </SelectTrigger>
+              <SelectContent>
+                {classOptions.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* --- 予約者名を追加 --- */}
@@ -200,6 +277,42 @@ export default function NewSchedulePage({
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        {/* --- 用途、利用人数、備考を追加 --- */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <Label htmlFor="purpose">用途名</Label>
+            <Input
+              id="purpose"
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              placeholder="例: ゼミ活動"
+            />
+          </div>
+
+          {/* --- 利用人数を追加 --- */}
+          <div className="space-y-1">
+            <Label htmlFor="numberOfUsers">利用人数</Label>
+            <Input
+              id="numberOfUsers"
+              type="number"
+              value={numberOfUsers}
+              onChange={(e) => setNumberOfUsers(e.target.value)}
+              placeholder="例: 5"
+            />
+          </div>
+        </div>
+
+        {/* --- 備考を追加 --- */}
+        <div className="space-y-1">
+          <Label htmlFor="note">備考</Label>
+          <Textarea
+            id="note"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="何か連絡事項があれば入力してください"
+          />
         </div>
 
         <Button
