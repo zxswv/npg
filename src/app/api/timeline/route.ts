@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
     // 全ての部屋を取得し、その日の予約情報も一緒に取得する
     const roomsWithReservations = await prisma.room.findMany({
-      orderBy: { name: "asc" }, // 部屋名でソート
+      orderBy: { number: "asc" }, // 部屋名でソート
       include: {
         // 関連する予約を取得
         reservations: {
@@ -35,9 +35,16 @@ export async function GET(req: NextRequest) {
             },
           },
           // 予約に紐づくスロットと予約者名も取得
-          include: {
+          select: {
+            id: true,
+            personName: true,
+            grade: true,
+            className: true,
+            purpose: true,
             slot: {
-              select: { startTime: true },
+              select: {
+                startTime: true,
+              },
             },
           },
         },

@@ -129,7 +129,7 @@ export default function ReservationForm({
     // console.log("送信するデータ:", reservationData);
 
     try {
-      const res = await fetch("/api/reservation", {
+      const res = await fetch("/api/reservations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(reservationData),

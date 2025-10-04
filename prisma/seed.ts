@@ -42,7 +42,7 @@ async function main() {
     { number: "1006", name: "レクチャー", capacity: 24 },
     { number: "1007", name: "レクチャー", capacity: 24 },
     { number: "1008", name: "レクチャー", capacity: 17 },
-    { number: "1009", name: "MCc", capacity: 18 },
+    { number: "1009", name: "MAC", capacity: 18 },
     { number: "1010", name: "win", capacity: 14 },
     { number: "1011", name: "音響(防音)", capacity: 20 },
     { number: "1012", name: "win", capacity: 18 },

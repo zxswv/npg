@@ -23,7 +23,7 @@ export default function HistoryPage() {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const res = await fetch("/api/reservation");
+        const res = await fetch("/api/reservations");
         if (!res.ok) {
           throw new Error("データの取得に失敗しました");
         }
