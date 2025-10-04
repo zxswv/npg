@@ -108,6 +108,9 @@ export function ReservationTimeline({
                         <p className="text-gray-600 truncate">
                           {reservation.grade} / {reservation.className}
                         </p>
+                        <p className="mt-1 text-right text-[10px] text-gray-500">
+                          予約済み
+                        </p>
                       </div>
                     ) : (
                       // 空きセルの表示

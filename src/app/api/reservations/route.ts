@@ -1,4 +1,4 @@
-// src/app/api/Reservation/route.ts
+// src/app/api/Reservations/route.ts
 // 予約の登録・取得（部屋・スロット含む）
 
 import { prisma } from "@/lib/prisma";

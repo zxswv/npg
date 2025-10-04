@@ -1,9 +1,19 @@
+// npg/src/app/api/reservations/bulk/route.ts
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { date, slots, personName, grade, className } = await req.json();
+    const {
+      date,
+      slots,
+      personName,
+      grade,
+      className,
+      purpose,
+      numberOfUsers,
+      note,
+    } = await req.json();
 
     if (
       !date ||
@@ -50,6 +60,9 @@ export async function POST(req: Request) {
           personName,
           grade,
           className,
+          purpose: purpose || null,
+          numberOfUsers: numberOfUsers ? Number(numberOfUsers) : null,
+          note: note || null,
           roomId: s.roomId,
           slotId: slot.id,
         };

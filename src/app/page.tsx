@@ -2,12 +2,12 @@
 // "use client";
 
 import * as React from "react";
-import ReservationsPage from "./components/reservations/page";
+import TimelinePage from "./timeline/page";
 
 export default async function Home() {
   return (
     <main>
-      <ReservationsPage />
+      <TimelinePage />
     </main>
   );
 }

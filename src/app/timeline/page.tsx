@@ -2,10 +2,11 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Calendar } from "@/app/components/ui/calendar";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
+import { Textarea } from "@/app/components/ui/textarea";
 import { Label } from "@/app/components/ui/label";
 import {
   Select,
@@ -31,6 +32,7 @@ import {
 } from "@/app/components/ui/card";
 import { ReservationTimeline } from "@/app/components/ReservationTimeline/ReservationTimeline";
 
+// 型の定義
 // APIから返されるデータの型
 export type RoomWithReservations = {
   id: number;
@@ -55,17 +57,22 @@ export type SelectedSlot = {
   time: string;
 };
 // 選択肢
-const gradeOptions = ["1年生", "2年生", "3年生", "4年生", "教職員", "その他"];
+const gradeOptions = ["1年", "2年", "3年", "研究生", "教職員", "外部"];
 const classOptions = [
-  "チャイルドケア",
+  "ヘアメイク",
+  "フィッシング",
+  "ミュージック",
+  "バスケット",
+  "パフォーミングアーツ",
+  "e-Sports",
   "ゲーム",
   "マンガ・イラスト",
-  "パフォ",
   "IT",
+  "動画クリエーター",
+  "チャイルドケア",
   "スポーツ",
-  "e-Sports",
-  "動画",
   "デザイン",
+  "高校",
 ];
 
 export default function TimelinePage() {
@@ -74,17 +81,44 @@ export default function TimelinePage() {
   const [timelineData, setTimelineData] = useState<RoomWithReservations[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 選択されたスロットを管理 (キーは "roomId-time")
+  // 予約機能
   const [selectedSlots, setSelectedSlots] = useState<Map<string, SelectedSlot>>(
     new Map()
   );
-  // 予約ダイアログの表示状態
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  // 予約者情報
-  const [personName, setPersonName] = useState("");
-  const [grade, setGrade] = useState("");
-  const [className, setClassName] = useState("");
   const [message, setMessage] = useState("");
+
+  // ダイアログ用のフォーム状態
+  const [personName, setPersonName] = useState(""); // 予約者名
+  const [grade, setGrade] = useState(""); // 学年
+  const [className, setClassName] = useState(""); // クラス
+  const [purpose, setPurpose] = useState(""); // 目的
+  const [numberOfUsers, setNumberOfUsers] = useState(""); // 利用人数
+  const [note, setNote] = useState(""); // 備考
+
+  // --- ↓ データを再取得する関数をuseCallbackで定義 ---
+  const fetchTimelineData = useCallback(async () => {
+    if (!date) return;
+    setIsLoading(true);
+    const dateString = formatDate(date);
+    try {
+      const res = await fetch(`/api/timeline?date=${dateString}`);
+      const data = await res.json();
+      setTimelineData(data);
+    } catch (error) {
+      console.error("タイムラインデータの取得エラー", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [date]); // dateが変更されたときだけ関数を再生成
+
+  // 初回読み込みと、date変更時にデータを取得
+  useEffect(() => {
+    fetchTimelineData();
+  }, [fetchTimelineData]);
+
+  // 日付フォーマット関数
+  const formatDate = (d: Date): string => d.toISOString().split("T")[0];
 
   const handleSlotClick = (slot: SelectedSlot) => {
     setSelectedSlots((prev) => {
@@ -117,11 +151,14 @@ export default function TimelinePage() {
     }
 
     const reservationData = {
-      date: date?.toISOString().split("T")[0],
-      slots: Array.from(selectedSlots.values()), // Mapの値を配列に変換
+      date: date ? formatDate(date) : "",
+      slots: Array.from(selectedSlots.values()),
       personName,
       grade,
-      className: `${className}カレッジ`,
+      className: `${className}カレッジ`, // 「カレッジ」を付与
+      purpose,
+      numberOfUsers,
+      note,
     };
 
     try {
@@ -140,8 +177,7 @@ export default function TimelinePage() {
       setIsDialogOpen(false);
       setSelectedSlots(new Map()); // 選択をリセット
       // タイムラインのデータを再取得して画面を更新
-      const event = new Event("refreshTimeline");
-      window.dispatchEvent(event);
+      await fetchTimelineData();
     } catch (error) {
       if (error instanceof Error) setMessage(`⚠ ${error.message}`);
     }
@@ -233,50 +269,72 @@ export default function TimelinePage() {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="personName" className="text-right">
-                  代表者名
-                </Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label htmlFor="grade">学年</Label>
+                  <Select onValueChange={setGrade} value={grade}>
+                    <SelectTrigger id="grade">
+                      <SelectValue placeholder="学年を選択" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {gradeOptions.map((g) => (
+                        <SelectItem key={g} value={g}>
+                          {g}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="className">カレッジ</Label>
+                  <Select onValueChange={setClassName} value={className}>
+                    <SelectTrigger id="className">
+                      <SelectValue placeholder="カレッジを選択" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {classOptions.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="personName">予約代表者名</Label>
                 <Input
                   id="personName"
                   value={personName}
                   onChange={(e) => setPersonName(e.target.value)}
-                  className="col-span-3"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="grade" className="text-right">
-                  学年
-                </Label>
-                <Select onValueChange={setGrade} value={grade}>
-                  <SelectTrigger id="grade" className="col-span-3">
-                    <SelectValue placeholder="学年を選択" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {gradeOptions.map((g) => (
-                      <SelectItem key={g} value={g}>
-                        {g}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label htmlFor="purpose">用途名</Label>
+                  <Input
+                    id="purpose"
+                    value={purpose}
+                    onChange={(e) => setPurpose(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="numberOfUsers">利用人数</Label>
+                  <Input
+                    id="numberOfUsers"
+                    type="number"
+                    value={numberOfUsers}
+                    onChange={(e) => setNumberOfUsers(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="className" className="text-right">
-                  カレッジ
-                </Label>
-                <Select onValueChange={setClassName} value={className}>
-                  <SelectTrigger id="className" className="col-span-3">
-                    <SelectValue placeholder="カレッジを選択" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {classOptions.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-1">
+                <Label htmlFor="note">備考</Label>
+                <Textarea
+                  id="note"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                />
               </div>
             </div>
             <DialogFooter>

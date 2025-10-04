@@ -31,7 +31,7 @@ const timeOptions = [
   "18:10",
   "19:50",
 ];
-const gradeOptions = ["1年", "2年", "3年", "研究生"];
+const gradeOptions = ["1年", "2年", "3年", "研究生", "教職員", "外部"];
 const classOptions = [
   "ヘアメイク",
   "フィッシング",
