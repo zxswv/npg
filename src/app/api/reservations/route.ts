@@ -150,15 +150,20 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
-      // 関連するデータも一緒に取得する
-      include: {
-        // Roomモデルからnameだけを取得
+      select: {
+        id: true,
+        personName: true,
+        grade: true,
+        className: true,
+        purpose: true,
+        numberOfUsers: true,
+        createdAt: true,
         room: {
           select: {
             name: true,
+            number: true,
           },
         },
-        // SlotモデルからstartTimeだけを取得
         slot: {
           select: {
             startTime: true,

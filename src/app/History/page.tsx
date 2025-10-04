@@ -1,16 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Badge } from "@/app/components/ui/badge";
 
 type ReservationLog = {
-  id: number;
+  id: string; // idはstring (uuid)
   personName: string;
-  createdAt: string; // 日付は文字列として受け取る
+  grade: string;
+  className: string;
+  purpose: string | null;
+  numberOfUsers: number | null;
+  createdAt: string;
   room: {
     name: string;
+    number: string;
   };
   slot: {
-    startTime: string; // 日付は文字列として受け取る
+    startTime: string;
   };
 };
 
@@ -62,13 +68,16 @@ export default function HistoryPage() {
                 予約日時
               </th>
               <th scope="col" className="px-6 py-3">
-                予約者名
+                所属・氏名
               </th>
               <th scope="col" className="px-6 py-3">
                 部屋
               </th>
               <th scope="col" className="px-6 py-3">
                 利用日時
+              </th>
+              <th scope="col" className="px-6 py-3">
+                用途・人数
               </th>
             </tr>
           </thead>
@@ -79,27 +88,58 @@ export default function HistoryPage() {
                   key={reservation.id}
                   className="bg-white border-b hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4">
-                    {/* 日付を日本のロケールに合わせて見やすくフォーマット */}
-                    {new Date(reservation.createdAt).toLocaleString("ja-JP", {
-                      timeZone: "UTC",
-                    })}
+                  {/* 予約日時 */}
+                  <td className="px-6 py-4 text-gray-500 whitespace-nowrap">
+                    {new Date(reservation.createdAt).toLocaleString("ja-JP")}
                   </td>
-                  <td className="px-6 py-4 font-medium text-gray-900">
-                    {reservation.personName}
-                  </td>
-                  <td className="px-6 py-4">{reservation.room.name}</td>
+                  {/* 所属・氏名 */}
                   <td className="px-6 py-4">
+                    <div className="font-medium text-gray-900">
+                      {reservation.personName}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {reservation.grade} / {reservation.className}
+                    </div>
+                  </td>
+                  {/* 部屋 */}
+                  <td className="px-6 py-4">
+                    <div className="font-medium">{reservation.room.number}</div>
+                    <div className="text-xs text-gray-500">
+                      ({reservation.room.name})
+                    </div>
+                  </td>
+                  {/* 利用日時 */}
+                  <td className="px-6 py-4 font-semibold whitespace-nowrap">
                     {new Date(reservation.slot.startTime).toLocaleString(
                       "ja-JP",
-                      { timeZone: "UTC" }
+                      {
+                        timeZone: "UTC",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }
                     )}
+                  </td>
+                  {/* 用途・人数 */}
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-1 items-start">
+                      <Badge variant="outline">
+                        {reservation.purpose || "---"}
+                      </Badge>
+                      {reservation.numberOfUsers && (
+                        <Badge variant="secondary">
+                          {reservation.numberOfUsers}人
+                        </Badge>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="px-6 py-4 text-center">
+                <td colSpan={5} className="px-6 py-4 text-center">
                   予約履歴はありません。
                 </td>
               </tr>
