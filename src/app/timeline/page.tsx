@@ -2,12 +2,13 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Calendar } from "@/app/components/ui/calendar";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Textarea } from "@/app/components/ui/textarea";
 import { Label } from "@/app/components/ui/label";
+import { ToggleGroup, ToggleGroupItem } from "@/app/components/ui/toggle-group";
 import {
   Select,
   SelectTrigger,
@@ -81,6 +82,9 @@ export default function TimelinePage() {
   const [timelineData, setTimelineData] = useState<RoomWithReservations[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // フロアフィルター
+  const [selectedFloor, setSelectedFloor] = useState<string>("all");
+
   // 予約機能
   const [selectedSlots, setSelectedSlots] = useState<Map<string, SelectedSlot>>(
     new Map()
@@ -116,6 +120,18 @@ export default function TimelinePage() {
   useEffect(() => {
     fetchTimelineData();
   }, [fetchTimelineData]);
+
+  // --- ↓ フィルタリングされたデータを計算するロジック ---
+  const filteredTimelineData = useMemo(() => {
+    if (selectedFloor === "all") return timelineData;
+    return timelineData.filter((room) => {
+      if (selectedFloor === "11F") return room.number.startsWith("11");
+      if (selectedFloor === "10F") return room.number.startsWith("10");
+      if (selectedFloor === "other")
+        return !room.number.startsWith("11") && !room.number.startsWith("10");
+      return true;
+    });
+  }, [timelineData, selectedFloor]); // timelineDataかselectedFloorが変更されたときだけ再計算
 
   // 日付フォーマット関数
   const formatDate = (d: Date): string => d.toISOString().split("T")[0];
@@ -183,29 +199,13 @@ export default function TimelinePage() {
     }
   };
 
-  // 日付が変更されたらAPIを叩いてデータを再取得
-  useEffect(() => {
-    if (!date) return;
-
-    const fetchTimelineData = async () => {
-      setIsLoading(true);
-      // Dateオブジェクトを "YYYY-MM-DD" 形式の文字列に変換
-      const dateString = date.toISOString().split("T")[0];
-      const res = await fetch(`/api/timeline?date=${dateString}`);
-      const data = await res.json();
-      setTimelineData(data);
-      setIsLoading(false);
-    };
-
-    fetchTimelineData();
-  }, [date]);
-
   return (
     <div className="container mx-auto p-4 md:p-8">
       <h1 className="text-3xl font-bold mb-6">予約状況タイムライン</h1>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* 左側: カレンダー */}
-        <div className="md:col-span-1">
+        <div className="md:col-span-1 flex flex-col gap-4">
+          {/* --- カレンダー ---*/}
           <Card>
             <CardHeader>
               <CardTitle>日付選択</CardTitle>
@@ -219,6 +219,36 @@ export default function TimelinePage() {
               />
             </CardContent>
           </Card>
+          {/* --- フロアフィルター --- */}
+          <Card>
+            <CardHeader>
+              <CardTitle>フロア選択</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ToggleGroup
+                type="single"
+                value={selectedFloor}
+                onValueChange={(value) => {
+                  if (value) setSelectedFloor(value); // 空の値が来ないようにガード
+                }}
+                className="flex-col w-full"
+              >
+                <ToggleGroupItem value="all" className="w-full">
+                  すべて
+                </ToggleGroupItem>
+                <ToggleGroupItem value="11F" className="w-full">
+                  11階
+                </ToggleGroupItem>
+                <ToggleGroupItem value="10F" className="w-full">
+                  10階
+                </ToggleGroupItem>
+                <ToggleGroupItem value="other" className="w-full">
+                  その他
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </CardContent>
+          </Card>
+          {/* --- 予約実行 --- */}
           <Card>
             <CardHeader>
               <CardTitle>予約実行</CardTitle>
@@ -250,7 +280,7 @@ export default function TimelinePage() {
                 <div className="text-center py-8">読み込み中...</div>
               ) : (
                 <ReservationTimeline
-                  data={timelineData}
+                  data={filteredTimelineData}
                   selectedSlots={selectedSlots}
                   onSlotClick={handleSlotClick}
                 />

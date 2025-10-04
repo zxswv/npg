@@ -70,7 +70,10 @@ export function ReservationTimeline({
               部屋
             </TableHead>
             {timeSlots.map((time) => (
-              <TableHead key={time} className="text-center">
+              <TableHead
+                key={time}
+                className="text-center min-w-[150px] align-middle"
+              >
                 {time}
               </TableHead>
             ))}
@@ -79,8 +82,8 @@ export function ReservationTimeline({
         <TableBody>
           {data.map((room) => (
             <TableRow key={room.id}>
-              <TableCell className="sticky left-0 bg-background z-10 p-2">
-                <div className="flex flex-col text-center">
+              <TableCell className="sticky left-0 bg-background z-10 p-2 h-[100px]">
+                <div className="flex flex-col text-center justify-center h-full">
                   <span className="font-bold text-lg">{room.number}</span>
                   <span className="text-sm truncate">{room.name}</span>
                   <span className="text-xs text-gray-500">
@@ -95,10 +98,13 @@ export function ReservationTimeline({
 
                 // クリック可能なセル
                 return (
-                  <TableCell key={key} className="text-center p-2">
+                  <TableCell
+                    key={key}
+                    className="text-center p-1 align-top h-[100px]"
+                  >
                     {reservation ? (
                       // 予約済みのセルの表示をリッチに
-                      <div className="bg-blue-100 border border-blue-300 text-blue-900 rounded-md p-2 text-xs text-left h-full">
+                      <div className="bg-blue-100 border border-blue-300 text-blue-900 rounded-md p-2 text-xs text-left h-full overflow-y-auto">
                         <p className="font-bold truncate">
                           {reservation.purpose || "（用途未入力）"}
                         </p>
@@ -123,7 +129,7 @@ export function ReservationTimeline({
                             time,
                           })
                         }
-                        className={`w-full h-full rounded-md p-2 text-xs transition-colors ${
+                        className={`w-full h-full rounded-md p-2 text-xs transition-colors flex items-center justify-center ${
                           isSelected
                             ? "bg-green-500 text-white font-bold ring-2 ring-green-700"
                             : "bg-gray-50 text-gray-400 hover:bg-green-100"
