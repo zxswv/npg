@@ -225,10 +225,10 @@ export default function TimelinePage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-600 mb-4">
-                選択中のスロット: {selectedSlots.size}件
+                選択中の部屋: {selectedSlots.size}件
               </p>
               <Button onClick={handleOpenDialog} className="w-full">
-                選択したスロットを予約する
+                選択した部屋を予約する
               </Button>
             </CardContent>
           </Card>
@@ -258,82 +258,110 @@ export default function TimelinePage() {
             </CardContent>
           </Card>
         </div>
-        {/* --- ↓ 予約実行用のダイアログを追加 --- */}
+        {/* --- ↓ 予約実行用のダイアログ --- */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>予約者情報の入力</DialogTitle>
+              <DialogTitle className="text-2xl">予約情報の入力</DialogTitle>
               <DialogDescription>
-                以下の情報を入力して予約を確定してください。選択した{" "}
-                {selectedSlots.size}件のスロットが一度に予約されます。
+                選択した {selectedSlots.size}件の部屋を予約します。
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label htmlFor="grade">学年</Label>
-                  <Select onValueChange={setGrade} value={grade}>
-                    <SelectTrigger id="grade">
-                      <SelectValue placeholder="学年を選択" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {gradeOptions.map((g) => (
-                        <SelectItem key={g} value={g}>
-                          {g}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="className">カレッジ</Label>
-                  <Select onValueChange={setClassName} value={className}>
-                    <SelectTrigger id="className">
-                      <SelectValue placeholder="カレッジを選択" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {classOptions.map((c) => (
-                        <SelectItem key={c} value={c}>
-                          {c}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+            <div className="space-y-6 py-2">
+              {" "}
+              {/* 全体の余白を調整 */}
+              {/* -- グループ1: 予約情報 -- */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-gray-500 border-b pb-2">
+                  予約情報
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="grade">
+                      学年 <span className="text-red-500">*</span>
+                    </Label>
+                    <Select onValueChange={setGrade} value={grade}>
+                      <SelectTrigger id="grade">
+                        <SelectValue placeholder="学年を選択" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {gradeOptions.map((g) => (
+                          <SelectItem key={g} value={g}>
+                            {g}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="className">
+                      カレッジ <span className="text-red-500">*</span>
+                    </Label>
+                    <Select onValueChange={setClassName} value={className}>
+                      <SelectTrigger id="className">
+                        <SelectValue placeholder="カレッジを選択" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {classOptions.map((c) => (
+                          <SelectItem key={c} value={c}>
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label htmlFor="personName">予約代表者名</Label>
-                <Input
-                  id="personName"
-                  value={personName}
-                  onChange={(e) => setPersonName(e.target.value)}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <Label htmlFor="purpose">用途名</Label>
+              {/* -- グループ2: 予約者情報 -- */}
+              <div className="space-y-4">
+                {/* <h3 className="text-sm font-semibold text-gray-500 border-b pb-2">
+                  予約詳細
+                </h3> */}
+                <div className="space-y-2">
+                  <Label htmlFor="personName">
+                    予約代表者名 <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="personName"
+                    value={personName}
+                    onChange={(e) => setPersonName(e.target.value)}
+                    placeholder="氏名を入力"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="purpose">
+                    用途名 <span className="text-gray-500">(任意)</span>
+                  </Label>
                   <Input
                     id="purpose"
                     value={purpose}
                     onChange={(e) => setPurpose(e.target.value)}
+                    placeholder="例: ゼミ活動、最終制作"
                   />
                 </div>
-                <div className="space-y-1">
-                  <Label htmlFor="numberOfUsers">利用人数</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="numberOfUsers">
+                    利用人数 <span className="text-gray-500">(任意)</span>
+                  </Label>
                   <Input
                     id="numberOfUsers"
                     type="number"
                     value={numberOfUsers}
                     onChange={(e) => setNumberOfUsers(e.target.value)}
+                    placeholder="例: 5"
                   />
                 </div>
               </div>
-              <div className="space-y-1">
-                <Label htmlFor="note">備考</Label>
+              {/* -- グループ3: 補足情報 -- */}
+              <div className="space-y-2">
+                <Label htmlFor="note">
+                  備考 <span className="text-gray-500">(任意)</span>
+                </Label>
                 <Textarea
                   id="note"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
+                  placeholder="機材の持ち込みや、その他連絡事項があれば入力してください"
                 />
               </div>
             </div>
