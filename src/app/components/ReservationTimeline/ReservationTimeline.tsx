@@ -44,11 +44,11 @@ export function ReservationTimeline({
   const reservationMap = new Map<string, ReservationInfo>();
   data.forEach((room) => {
     room.reservations.forEach((res) => {
-      // タイムゾーン問題を避けるため、UTC時刻から日本の時間文字列を生成
+      //
       const time = new Date(res.slot.startTime).toLocaleTimeString("ja-JP", {
         hour: "2-digit",
         minute: "2-digit",
-        timeZone: "Asia/Tokyo",
+        timeZone: "UTC",
       });
       const key = `${room.id}-${time}`;
       reservationMap.set(key, {

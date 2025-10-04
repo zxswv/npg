@@ -19,6 +19,11 @@ export async function POST(req: Request) {
       );
     }
 
+    // 重複するスロットを排除
+    const uniqueSlots = Array.from(
+      new Map(slots.map((s: any) => [`${s.roomId}-${s.time}`, s])).values()
+    );
+
     const targetDate = new Date(`${date}T00:00:00.000Z`);
     const schedule = await prisma.schedule.findUnique({
       where: { date: targetDate },
@@ -32,7 +37,7 @@ export async function POST(req: Request) {
 
     // フロントから来たslots情報をもとに、DBのSlot IDを検索
     const reservationsToCreate = await Promise.all(
-      slots.map(async (s: { roomId: number; time: string }) => {
+      uniqueSlots.map(async (s: any) => {
         const startTime = new Date(`${date}T${s.time}:00.000Z`);
         const slot = await prisma.slot.findFirst({
           where: { scheduleId: schedule.id, startTime: startTime },
@@ -51,7 +56,26 @@ export async function POST(req: Request) {
       })
     );
 
-    // 予約を一括作成
+    // 既に予約されていないか、再度ここでチェックする（より安全）
+    const existingReservations = await prisma.reservation.findMany({
+      where: {
+        OR: reservationsToCreate.map((r) => ({
+          slotId: r.slotId,
+          roomId: r.roomId,
+        })),
+      },
+    });
+
+    if (existingReservations.length > 0) {
+      return NextResponse.json(
+        {
+          error:
+            "選択したスロットの一部は、既に他のユーザーによって予約されています。",
+        },
+        { status: 409 }
+      );
+    }
+
     await prisma.reservation.createMany({
       data: reservationsToCreate,
     });

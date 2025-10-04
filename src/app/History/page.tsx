@@ -81,7 +81,9 @@ export default function HistoryPage() {
                 >
                   <td className="px-6 py-4">
                     {/* 日付を日本のロケールに合わせて見やすくフォーマット */}
-                    {new Date(reservation.createdAt).toLocaleString("ja-JP")}
+                    {new Date(reservation.createdAt).toLocaleString("ja-JP", {
+                      timeZone: "UTC",
+                    })}
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900">
                     {reservation.personName}
@@ -89,7 +91,8 @@ export default function HistoryPage() {
                   <td className="px-6 py-4">{reservation.room.name}</td>
                   <td className="px-6 py-4">
                     {new Date(reservation.slot.startTime).toLocaleString(
-                      "ja-JP"
+                      "ja-JP",
+                      { timeZone: "UTC" }
                     )}
                   </td>
                 </tr>
