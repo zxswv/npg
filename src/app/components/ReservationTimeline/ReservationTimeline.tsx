@@ -223,19 +223,21 @@ export function ReservationTimeline({
             <AlertDialogTitle>
               本当に予約をキャンセルしますか？
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              この操作は元に戻すことはできません。以下の予約が完全に削除されます。
-              <div className="mt-4 bg-gray-100 p-3 rounded-md text-sm">
-                <p>
-                  <strong>部屋:</strong> {reservationToCancel?.roomNumber} (
-                  {reservationToCancel?.roomName})
-                </p>
-                <p>
-                  <strong>時間:</strong> {reservationToCancel?.time}
-                </p>
-                <p>
-                  <strong>予約者:</strong> {reservationToCancel?.personName}
-                </p>
+            <AlertDialogDescription asChild>
+              <div>
+                この操作は元に戻すことはできません。以下の予約が完全に削除されます。
+                <div className="mt-4 bg-gray-100 p-3 rounded-md text-sm">
+                  <p>
+                    <strong>部屋:</strong> {reservationToCancel?.roomName} (
+                    {reservationToCancel?.roomNumber})
+                  </p>
+                  <p>
+                    <strong>時間:</strong> {reservationToCancel?.time}
+                  </p>
+                  <p>
+                    <strong>予約者:</strong> {reservationToCancel?.personName}
+                  </p>
+                </div>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>

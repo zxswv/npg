@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 
 // DELETE: 指定されたIDの予約を削除する
 export async function DELETE(
-  req: Request,
+  req: Request, // req は使いませんが、シグネチャとして必要
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = params.id; // URLから予約IDを取得
+    const id = params.id;
 
     if (!id) {
       return NextResponse.json(
@@ -16,9 +16,8 @@ export async function DELETE(
       );
     }
 
-    // --- ここに、本当にその予約を削除して良いかの権限チェックを入れるのが理想 ---
-    // (例: ログインしているユーザーIDと、予約者のIDが一致するかどうかなど)
-    // 今回はシンプルに、IDがあれば削除できるようにします。
+    // --- 権限チェックをして削除をするロジックを追加予定 ---
+    // 現在はシンプルに、IDがあれば削除できる状態
 
     await prisma.reservation.delete({
       where: { id: id },
