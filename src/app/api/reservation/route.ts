@@ -152,6 +152,7 @@ export async function GET() {
       },
       select: {
         id: true,
+        status: true,
         personName: true,
         grade: true,
         className: true,

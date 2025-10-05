@@ -72,6 +72,7 @@ export async function POST(req: Request) {
     // 既に予約されていないか、再度ここでチェックする（より安全）
     const existingReservations = await prisma.reservation.findMany({
       where: {
+        status: "APPROVED",
         OR: reservationsToCreate.map((r) => ({
           slotId: r.slotId,
           roomId: r.roomId,

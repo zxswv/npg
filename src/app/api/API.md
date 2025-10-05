@@ -84,3 +84,16 @@ await fetch("/api/users", {
   body: JSON.stringify({ name: "Taro", email: "taro@example.com" })
   });
 ```
+
+````bash
+/src/app/api
+├── reservation/
+│   ├── bulk/
+│   │   └── route.ts  (POST: 一括予約)
+│   ├── status/
+│   │   └── route.ts  (PATCH: ステータス更新)
+│   └── route.ts      (GET: 履歴取得)
+│
+└── timeline/
+    └── route.ts```
+````

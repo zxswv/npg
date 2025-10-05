@@ -1,3 +1,5 @@
+// app/history/page.tsx
+// ログページ
 "use client";
 
 import { useState, useEffect } from "react";
@@ -29,7 +31,7 @@ export default function HistoryPage() {
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const res = await fetch("/api/reservations");
+        const res = await fetch("/api/reservation");
         if (!res.ok) {
           throw new Error("データの取得に失敗しました");
         }

@@ -170,7 +170,7 @@ export default function TimelinePage() {
     };
 
     toast.promise(
-      fetch("/api/reservations/bulk", {
+      fetch("/api/reservation/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(reservationData),

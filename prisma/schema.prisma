@@ -47,10 +47,18 @@ model Reservation {
   numberOfUsers Int?       // 利用人数
   note        String?       // 備考など
 
+  status        ReservationStatus @default(PENDING) // デフォルトは「仮予約」状態
+
   createdAt   DateTime      @default(now()) // 予約の作成日時
   updatedAt   DateTime      @updatedAt  // 予約の更新日時
   // 同じ時間枠に同じ部屋の予約が重複しないようにする
   @@unique([slotId, roomId])
+}
+
+enum ReservationStatus {
+  PENDING   // 仮予約（申請中）
+  APPROVED  // 承認済み
+  REJECTED  // 却下済み
 }
 
 // シンプルな予約モデルを定義

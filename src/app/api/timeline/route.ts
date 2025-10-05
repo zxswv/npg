@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
         reservations: {
           // ただし、指定された日の予約のみ
           where: {
+            status: "APPROVED", //ステータスが承認済みの予約のみを取得する
             slot: {
               startTime: {
                 gte: startDate, // Greater than or equal to (以上)

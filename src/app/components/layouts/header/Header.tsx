@@ -32,7 +32,7 @@ const Header = () => {
             </Link> */}
             <Link
               className="bg-black py-3 px-4 text-white rounded-md font-medium"
-              href="/rooms"
+              href="/adminPanel"
             >
               部屋管理
             </Link>
