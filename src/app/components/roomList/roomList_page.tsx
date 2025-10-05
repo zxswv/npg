@@ -1,4 +1,4 @@
-// npg/src/app/components/roomList/roomList_page.tsx
+// app/components/roomList/roomList_page.tsx
 "use client";
 import { useEffect, useState } from "react";
 

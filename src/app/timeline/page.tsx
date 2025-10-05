@@ -11,12 +11,11 @@ import {
   CardTitle,
   CardDescription,
 } from "@/app/components/ui/card";
-import { ReservationTimeline } from "@/app/components/ReservationTimeline/ReservationTimeline";
-// --- ↓ 新しいコンポーネントをインポート ---
-import { DateSelector } from "@/app/components/timeline/DateSelector";
-import { FloorFilter } from "@/app/components/timeline//FloorFilter";
-import { ReservationControl } from "@/app/components/timeline/ReservationControl";
-import { ReservationDialog } from "@/app/components/timeline/ReservationDialog";
+import { ReservationTimeline } from "@/app/components/ReservationTimeline/ReservationTimeline"; //セルの中身
+import { DateSelector } from "@/app/components/timeline/DateSelector"; //カレンダー
+import { FloorFilter } from "@/app/components/timeline//FloorFilter"; //フロアフィルター
+import { ReservationControl } from "@/app/components/timeline/ReservationControl"; //予約実行ボタン部分
+import { ReservationDialog } from "@/app/components/timeline/ReservationDialog"; //予約のホップアップ
 
 // 型の定義
 // APIから返されるデータの型
@@ -30,6 +29,9 @@ export type RoomWithReservations = {
     personName: string;
     grade: string;
     className: string;
+    roomName: string;
+    roomNumber: string;
+    time: string;
     purpose: string | null;
     slot: {
       startTime: string;
@@ -236,6 +238,7 @@ export default function TimelinePage() {
                   data={filteredTimelineData}
                   selectedSlots={selectedSlots}
                   onSlotClick={handleSlotClick}
+                  onReservationUpdate={fetchTimelineData}
                 />
               )}
             </CardContent>

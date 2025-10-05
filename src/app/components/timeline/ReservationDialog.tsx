@@ -1,4 +1,5 @@
 // app/components/timeline/ReservationDialog.tsx
+// 予約のホップアップ
 
 "use client";
 import { Button } from "@/app/components/ui/button";
