@@ -179,21 +179,21 @@ export default function TimelinePage() {
       }).then(async (res) => {
         const result = await res.json();
         if (!res.ok) {
-          throw new Error(result.error || "予約に失敗しました");
+          throw new Error(result.error || "仮予約に失敗しました");
         }
         return result;
       }),
       {
-        loading: "予約処理中...",
+        loading: "仮予約処理中...",
         success: () => {
           setIsDialogOpen(false);
           setSelectedSlots(new Map());
           fetchTimelineData(); // タイムラインを更新
-          return "予約が完了しました！";
+          return "仮予約が完了しました！";
         },
         error: (err) => {
           setFormState((prev) => ({ ...prev, formError: err.message }));
-          return "予約に失敗しました。";
+          return "仮予約に失敗しました。";
         },
       }
     );

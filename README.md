@@ -68,6 +68,8 @@ npm run db:seed #データベースに必要なデータを作成する
 npx prisma studio #prismaを直接操作確認できる
 # or
 npx prisma generate #スキーマやモデルを変えた際反映させるコマンド
+# or
+npx prisma migrate dev
 ```
 
 ## 起動コマンド
