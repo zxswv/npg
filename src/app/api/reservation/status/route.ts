@@ -14,8 +14,18 @@ export async function PATCH(req: Request) {
         { status: 400 }
       );
     }
+    // --- "REJECTED" の場合の処理 ---
+    if (status === "REJECTED") {
+      // 却下の場合は、予約レコードを完全に削除する
+      await prisma.reservation.delete({
+        where: { id: id },
+      });
+      // 成功レスポンスを返す
+      return new NextResponse(null, { status: 204 }); // No Content
+    }
 
     // --- 承認時の重複チェック ---
+    // --- "APPROVED" の場合の処理 ---
     if (status === "APPROVED") {
       const targetReservation = await prisma.reservation.findUnique({
         where: { id },
