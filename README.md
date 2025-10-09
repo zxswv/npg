@@ -1,4 +1,8 @@
-# バグ
+# 環境構築
+
+[手順](/npg/環境構築.md)
+
+## バグ
 
 ```bash
 ・カレンダーで選択した日付の一日前になる # 修正済み
@@ -6,20 +10,21 @@
 ・カレンダーに月や年を素早く切り替えるものが無い
 ・カレンダーの月が英語表示のまま
 ・人数が０以下も入れれちゃう
-・タイムラインのフィルター機能を使うとデザインが変わる。
-・予約取り消しページがない
-・最初に読み込まれるタイムラインの表記は当日でデータが一日前になっている。
-・ログページのログがすべてで申請中/認可/却下の区別がない。
+・タイムラインのフィルター機能を使うとデザインが変わる
+・最初に読み込まれるタイムラインの表記は当日でデータが一日前になっている
+・選択した部屋がどこの何時かを予約のホップアップで表示する
+・ログページのログがすべてで申請中/認可/却下の区別。
 ```
 
-# 実装予定
+## 実装予定
 
 ```bash
 ・部屋を選択した際に24時間グラフを使って視覚的に一目で空いている時間が分るやつ # 実装済み
 ・借りれない時間帯を選択できないようにする # 実装済み
 ・部屋の登録情報を完成させる # 実装済み
 ・部屋管理で借りられている状態が一目でわかる # 実装済み
-・予約した際の成功や失敗メッセージを作成/現在も出てくるが分かりにくいため
+・予約した際の成功や失敗メッセージを作成/現在も出てくるが分かりにくいため # 実装済み
+・予約取り消し機能 # 実装済み
 ```
 
 ## 実装検討
@@ -123,20 +128,6 @@ docker rm コンテナID # コンテナの削除
 ## データベース操作
 
 ```bash
-psql -U tt -d DB # データベースにログイン
-# or
-SELECT * FROM テーブル名; # 中身を確認
-# or
-\dt; # データベースのテーブル一覧を表示する
-# or
-SHOW DATABASES; # データベースの一覧を表示する
-# or
-docker compose exec database bash # dockerからSQLコンテナ(database)に接続
-# or
-USE データベース名; # テーブルの一覧を表示する
-# or
-DESCRIBE table_name; # テーブルの構造を表示する
-# or
 docker ps -a
 # or
 docker exec -it next.js-test-network-db psql -U tt -d DB  # コンテナ内でユーザー（ロール）を確認
@@ -148,35 +139,6 @@ docker exec -it next.js-test-network-db ls -l /docker-entrypoint-initdb.d/
 \q #終了
 #or
 
-```
-
-## SQl
-
-```bash
-CREATE DATABASE IF NOT EXISTS データベース名;
-#
-CREATE DATABASE # 新しいデータベースを作成するコマンドです。
-# or
-IF NOT EXISTS # 同名のデータベースが既に存在する場合にエラーを防ぐための条件です。
-
-
-```
-
-### SQL の情報
-
-```bash
-
-```
-
-### SHOW DATABASES; を実行した際
-
-```bash
-    Reservation_Site # 今回使うデータベース名
-    information_schema # MySQLデータベースのメタデータ
-    mysql # MySQLサーバーに関するユーザーアカウントや特権情報
-    performance_schema # MySQLサーバーのパフォーマンスに関する情報
-    shop # 今回準備した初期データを入れる用のデータベース
-    sys # MySQLの内部管理、セッション、ステートメントなどの情報
 ```
 
 # docker 説明
@@ -218,16 +180,6 @@ IF NOT EXISTS # 同名のデータベースが既に存在する場合にエラ�
   デバッグツールやホットリロードなどの開発用の設定を省略。\
   パフォーマンス最適化のための設定が含まれることが多い。
 
-# エラー
-
-<!-- 401 → JWT Cookie が送られていない / 無効（未ログイン）
-
-403 → ロールに CREATE_EVENTS パーミッションがない
-
-400 → text や date が空
-
-500 → サーバー側で何らかのエラー（DB, SQL 文, 予期しない null など） -->
-
 # 参考資料
 
 [絵文字](https://zenn.dev/cube_3110/articles/2d0cc2e6b863ca)
@@ -237,24 +189,3 @@ IF NOT EXISTS # 同名のデータベースが既に存在する場合にエラ�
 [【入門】Prisma を始めるときに押さえておきたいポイントまとめ](https://share.google/bHz3caiBXmmhBTbIK)
 
 ![alt text](l1Jg54Y-1.png)
-
-# セットアップする際のコマンド
-
-# .env
-
-```bash
-DATABASE_URL="postgresql://tt:tt@localhost:5432/DB?schema=public"
-
-DIRECT_URL="postgresql://tt:tt@localhost:5432/DB?schema=public"
-```
-
-```bash
-.envを作成
-npm install (必要なパッケージをインストール)
-
-npx prisma migrate dev (データベースにテーブルを作成)
-
-npm run db:seed (初期データを投入)
-
-npm run dev (アプリケーションを起動)
-```

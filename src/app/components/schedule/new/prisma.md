@@ -3,6 +3,8 @@
 ```bash
 app/
 ├─ api/
+│  ├─ room/
+│  │  └─ route.ts       ← REST API (GET)
 │  └─ reservation/
 │     └─ route.ts       ← REST API (POST/GET)
 ├─ reserve/
