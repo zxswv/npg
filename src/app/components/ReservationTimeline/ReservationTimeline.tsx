@@ -2,8 +2,8 @@
 // セルの中身
 "use client";
 
-import { useState } from "react"; // useStateをインポート
-import { toast } from "sonner"; // sonnerをインポート
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/components/ui/table";
-import { Button } from "@/app/components/ui/button"; // Buttonをインポート
+import { Button } from "@/app/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -78,7 +78,7 @@ export function ReservationTimeline({
       const time = new Date(res.slot.startTime).toLocaleTimeString("ja-JP", {
         hour: "2-digit",
         minute: "2-digit",
-        timeZone: "UTC",
+        timeZone: "UTC", //時間をUTCに合わせてる
       });
       const key = `${room.id}-${time}`;
 
@@ -165,7 +165,7 @@ export function ReservationTimeline({
                       className="text-center p-1 align-top h-[120px]"
                     >
                       {reservation ? (
-                        // 予約済みのセルの表示をリッチに
+                        // 予約済みのセルの表示
                         <div className="bg-blue-100 border border-blue-300 text-blue-900 rounded-md p-2 text-xs text-left h-full flex flex-col justify-between">
                           <p className="font-bold truncate">
                             {reservation.purpose || "（用途未入力）"}
