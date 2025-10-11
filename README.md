@@ -19,17 +19,17 @@
   - [docker 操作](#docker-操作)
   - [データベース操作](#データベース操作)
 - [docker 説明](#docker-説明)
-  - [docker-compose.yml と docker-compose-prod.yml 主な違いのまとめ](#docker-composeyml-と-docker-compose-prodyml-主な違いのまとめ)
-  - [docker-compose.yml](#docker-composeyml)
+    - [docker-compose.yml と docker-compose-prod.yml 主な違いのまとめ](#docker-composeyml-と-docker-compose-prodyml-主な違いのまとめ)
+    - [docker-compose.yml](#docker-composeyml)
 - [](#)
-  - [docker-compose-prod.yml](#docker-compose-prodyml)
+    - [docker-compose-prod.yml](#docker-compose-prodyml)
 - [参考資料](#参考資料)
 
 # 環境構築
 
-[開発環境構築手順](/npg/memo/環境構築.md)
+[開発環境構築手順](/memo/環境構築.md)
 
-[本番環境構築手順](/npg/memo/本番環境構築.md)
+[本番環境構築手順](/memo/本番環境構築.md)
 
 # 技術スタック
 
