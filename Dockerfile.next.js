@@ -1,4 +1,4 @@
-FROM node:24-bullseye
+FROM node:20-bullseye
 
 WORKDIR /npg
 

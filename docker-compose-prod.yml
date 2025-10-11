@@ -1,10 +1,10 @@
-# services:
-#   next.js: #コンテナ1
-#     build:
-#       dockerfile: ./Dockerfile.next.js.prod #ここだけ本番環境用に変更
-#     container_name: 2next.js
-#     ports:
-#       - 3300:3300
+services:
+  next.js: #コンテナ1
+    build:
+      dockerfile: ./Dockerfile.next.js.prod #ここだけ本番環境用に変更
+    container_name: 2next.js
+    ports:
+      - 3300:3300
 2mongodb: #コンテナ2
   image: postgres:14 #イメージ名
   container_name: 2mongodb #コンテナ名
@@ -17,8 +17,8 @@
     POSTGRES_PASSWORD: tt #パスワード
     POSTGRES_DATABASE: DB #データベース名
 
-# networks: #ネットワーク
-#   default:
-#     name: npg_net
-# volumes: #ボリューム
+networks: #ネットワーク
+  default:
+    name: npg_net
+volumes: #ボリューム
 

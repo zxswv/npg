@@ -1,6 +1,66 @@
+# 目次
+
+- [目次](#目次)
+- [環境構築](#環境構築)
+- [技術スタック](#技術スタック)
+  - [共通](#共通)
+  - [フレイムワーク](#フレイムワーク)
+  - [フロントエンド](#フロントエンド)
+  - [バックエンド](#バックエンド)
+  - [データベース](#データベース)
+  - [ライブラリー](#ライブラリー)
+  - [バグ](#バグ)
+  - [実装予定](#実装予定)
+  - [実装検討](#実装検討)
+- [サーバーコマンド一覧](#サーバーコマンド一覧)
+  - [prisma コマンド](#prisma-コマンド)
+  - [起動コマンド](#起動コマンド)
+  - [prisma コマンド](#prisma-コマンド-1)
+  - [docker 操作](#docker-操作)
+  - [データベース操作](#データベース操作)
+- [docker 説明](#docker-説明)
+  - [docker-compose.yml と docker-compose-prod.yml 主な違いのまとめ](#docker-composeyml-と-docker-compose-prodyml-主な違いのまとめ)
+  - [docker-compose.yml](#docker-composeyml)
+- [](#)
+  - [docker-compose-prod.yml](#docker-compose-prodyml)
+- [参考資料](#参考資料)
+
 # 環境構築
 
-[手順](/npg/環境構築.md)
+[開発環境構築手順](/npg/memo/環境構築.md)
+
+[本番環境構築手順](/npg/memo/本番環境構築.md)
+
+# 技術スタック
+
+## 共通
+
+<img src="https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white">
+<img src="https://img.shields.io/badge/-ReactJs-61DAFB?logo=react&logoColor=white&style=for-the-badge">
+
+## フレイムワーク
+
+<img src="https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white">
+
+## フロントエンド
+
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
+<img src="https://img.shields.io/badge/shadcn%2Fui-000?logo=shadcnui&logoColor=fff&style=for-the-badge">
+
+## バックエンド
+
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
+<img src="https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white">
+
+## データベース
+
+<img src="https://img.shields.io/badge/postgresql-4169e1?style=for-the-badge&logo=postgresql&logoColor=white">
+
+## ライブラリー
+
+<img src="">
+framer-motion  //使いたい機能・アニメーション  
+react-icons  //使いたい機能・アイコン
 
 ## バグ
 
@@ -14,6 +74,7 @@
 ・最初に読み込まれるタイムラインの表記は当日でデータが一日前になっている
 ・選択した部屋がどこの何時かを予約のホップアップで表示する
 ・ログページのログがすべてで申請中/認可/却下の区別。
+・別の端末で予約した変更がページを再読み込みしないと反映されない
 ```
 
 ## 実装予定
@@ -34,34 +95,6 @@
 ・授業登録画面
 ・掲示板
 ・インターネットアクセス
-
-# 技術スタック
-
-## 共通
-
-- Node.js
-
-- Next.js
-
-## フロントエンド
-
-- React
-- [ui.shadcn](https://ui.shadcn.com/)
-
-## バックエンド
-
-## データベース
-
-- PostgreSQL
-
-## ライブラリー
-
-- framer-motion
-- react-icons
-- nodemailer
-- npm install nodemailer
-- TypeScript を使用している場合は、型定義もインストールする
-- npm install --save-dev @types/nodemailer
 
 # サーバーコマンド一覧
 

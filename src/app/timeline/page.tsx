@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "sonner";
+import { Calendar } from "@/app/components/ui/calendar";
 import {
   Card,
   CardContent,
@@ -12,7 +13,7 @@ import {
   CardDescription,
 } from "@/app/components/ui/card";
 import { ReservationTimeline } from "@/app/components/ReservationTimeline/ReservationTimeline"; //セルの中身
-import { DateSelector } from "@/app/components/timeline/DateSelector"; //カレンダー
+// import { DateSelector } from "@/app/components/timeline/DateSelector"; //カレンダー
 import { FloorFilter } from "@/app/components/timeline//FloorFilter"; //フロアフィルター
 import { ReservationControl } from "@/app/components/timeline/ReservationControl"; //予約実行ボタン部分
 import { ReservationDialog } from "@/app/components/timeline/ReservationDialog"; //予約のホップアップ
@@ -29,9 +30,9 @@ export type RoomWithReservations = {
     personName: string;
     grade: string;
     className: string;
-    roomName: string;
-    roomNumber: string;
-    time: string;
+    // roomName: string;
+    // roomNumber: string;
+    // time: string;
     purpose: string | null;
     slot: {
       startTime: string;
@@ -46,19 +47,19 @@ export type SelectedSlot = {
 };
 
 export default function TimelinePage() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(undefined);
   // タイムラインデータ
   const [timelineData, setTimelineData] = useState<RoomWithReservations[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
   // フロアフィルター
   const [selectedFloor, setSelectedFloor] = useState<string>("all");
-
   // 予約機能
   const [selectedSlots, setSelectedSlots] = useState<Map<string, SelectedSlot>>(
     new Map()
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  // ハイドレーション対策
+  const [isClient, setIsClient] = useState(false);
 
   // --- ↓ ダイアログのフォームstateをオブジェクトとして一元管理 ---
   const [formState, setFormState] = useState({
@@ -77,26 +78,36 @@ export default function TimelinePage() {
   // 日付フォーマット関数
   const formatDate = (d: Date): string => d.toISOString().split("T")[0];
 
+  // クライアントサイドでのみ実行されるマウント時の処理
+  useEffect(() => {
+    // クライアント指定
+    setIsClient(true);
+    // ページがブラウザーに読み込まれたら、今日の日付をリセットする。
+    setDate(new Date());
+  }, []); // 空の配列を指定することで、マウント時に一度だけ実行される
+
   // --- ↓ データを再取得する関数をuseCallbackで定義 ---
   const fetchTimelineData = useCallback(async () => {
     if (!date) return;
+
     setIsLoading(true);
-    const dateString = formatDate(date);
+    const dateString = date.toISOString().split("T")[0];
     try {
       const res = await fetch(`/api/timeline?date=${dateString}`);
+      if (!res.ok) throw new Error("データ取得に失敗");
       const data = await res.json();
       setTimelineData(data);
     } catch (error) {
       console.error("タイムラインデータの取得エラー", error);
+      toast.error("データの読み込みに失敗しました。");
     } finally {
       setIsLoading(false);
     }
   }, [date]); // dateが変更されたときだけ関数を再生成
 
-  // 初回読み込みと、date変更時にデータを取得
   useEffect(() => {
     fetchTimelineData();
-  }, [fetchTimelineData]);
+  }, [fetchTimelineData]); // dateの変更をトリガーにする
 
   // --- ↓ フィルタリングされたデータを計算するロジック ---
   const filteredTimelineData = useMemo(() => {
@@ -206,7 +217,25 @@ export default function TimelinePage() {
         {/* 左側: カレンダー */}
         <aside className="md:w-1/4 lg:w-1/5 flex-shrink-0 flex flex-col gap-8">
           {/* --- カレンダー ---*/}
-          <DateSelector date={date} onDateChange={setDate} />
+          <Card>
+            <CardHeader>
+              <CardTitle>日付選択</CardTitle>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+              {isClient ? (
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  className="rounded-md border"
+                />
+              ) : (
+                <div className="p-3">
+                  <div className="w-[280px] h-[330px] bg-gray-200 rounded-md animate-pulse"></div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
           {/* --- フィルター --- */}
           <FloorFilter
             selectedFloor={selectedFloor}
