@@ -2,7 +2,7 @@
 // 予約の登録・取得（部屋・スロット含む）
 
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 // POST: 予約作成
 export async function POST(req: Request) {
@@ -143,9 +143,20 @@ export async function POST(req: Request) {
 }
 
 // GET: 予約取得（部屋・スロット含む）
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // req を受け取るように変更
   try {
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get("status");
+    // Prismaのクエリ条件を動的に構築
+    const whereCondition: any = {};
+    if (status && status !== "ALL") {
+      // 'ALL' 以外が指定された場合、そのステータスで絞り込む
+      whereCondition.status = status;
+    }
+
     const reservations = await prisma.reservation.findMany({
+      where: whereCondition, // 動的に生成した条件を適用a
       // 予約が作成された順（新しいものが先頭）に並び替え
       orderBy: {
         createdAt: "desc",
