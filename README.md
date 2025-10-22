@@ -55,6 +55,7 @@
 ## データベース
 
 <img src="https://img.shields.io/badge/postgresql-4169e1?style=for-the-badge&logo=postgresql&logoColor=white">
+Prisma
 
 ## ライブラリー
 
@@ -89,11 +90,11 @@ react-icons  //使いたい機能・アイコン
 
 ## 実装検討
 
-・ユーザー管理
-・権限管理
-・授業登録画面
-・掲示板
-・インターネットアクセス
+・ユーザー管理  
+・権限管理  
+・授業登録画面  
+・掲示板  
+・インターネットアクセス  
 
 # サーバーコマンド一覧
 
