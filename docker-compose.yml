@@ -1,20 +1,21 @@
 services:
-  next.js:
-    build: #コンテナ1
-      context: . #コンテキスト
-      dockerfile: ./Dockerfile.next.js
-    container_name: 2next.js #コンテナ名
-    working_dir: /npg #作業ディレクトリを/appに設定
-    command: sh -c "npx prisma generate && npm run dev" #prismaがうまく行ったらポート3300で起動
-    volumes:
-      - .:/app #ボリュームをマウント
-      - /app/node_modules
-      - /app/.next
-    ports:
-      - "3300:3300"
-      # - "5555:5555" #ポート番号
-    depends_on:
-      - 2mongodb
+  # next.js: #本番環境のみ構築、↓ ここから開発環境ならコメントアウト
+  #   build: #コンテナ1
+  #     context: . #コンテキスト
+  #     dockerfile: ./Dockerfile.next.js
+  #   container_name: 2next.js #コンテナ名
+  #   working_dir: /npg #作業ディレクトリを/appに設定
+  #   command: sh -c "npx prisma generate && npm run dev" #prismaがうまく行ったらポート3300で起動
+  #   volumes:
+  #     - .:/app #ボリュームをマウント
+  #     - /app/node_modules
+  #     - /app/.next
+  #   ports:
+  #     - "3300:3300"
+  #     # - "5555:5555" #ポート番号
+  #   depends_on:
+  #     - 2mongodb
+  # ↑ ここまでコメントアウト
 
   2mongodb: #コンテナ2
     image: postgres:14 #イメージ名

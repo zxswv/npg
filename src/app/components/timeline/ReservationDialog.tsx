@@ -6,6 +6,7 @@ import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Textarea } from "@/app/components/ui/textarea";
 import { Label } from "@/app/components/ui/label";
+import { ScrollArea } from "@/app/components/ui/scroll-area";
 import {
   Select,
   SelectTrigger,
@@ -21,12 +22,13 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/app/components/ui/dialog";
+import { SelectedSlot } from "@/app/timeline/page"; // 親から型をインポート
 
 // Propsの型定義
 interface ReservationDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedSlotsSize: number;
+  selectedSlots: Map<string, SelectedSlot>;
   formState: any; // 簡潔にするためanyを使用
   onFormStateChange: (field: string, value: string) => void;
   onConfirm: () => void;
@@ -54,7 +56,7 @@ const classOptions = [
 export function ReservationDialog({
   isOpen,
   onOpenChange,
-  selectedSlotsSize,
+  selectedSlots,
   formState,
   onFormStateChange,
   onConfirm,
@@ -69,6 +71,9 @@ export function ReservationDialog({
     formError,
   } = formState;
 
+  // Mapから値の配列を取得
+  const selectedSlotsArray = Array.from(selectedSlots.values());
+
   return (
     //  --- ↓ 予約実行用のダイアログ ---
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -76,13 +81,30 @@ export function ReservationDialog({
         <DialogHeader>
           <DialogTitle className="text-2xl">予約情報の入力</DialogTitle>
           <DialogDescription>
-            選択した {selectedSlotsSize}件の部屋を予約します。
+            選択した {selectedSlots.size}件の部屋を予約します。
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-6 py-2">
-          {" "}
-          {/* 全体の余白を調整 */}
           {/* -- グループ1: 予約情報 -- */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-gray-500 border-b pb-2">
+              予約対象の部屋・時間
+            </h3>
+            <ScrollArea className="h-auto max-h-[120px] rounded-md border p-3">
+              <div className="space-y-2">
+                {selectedSlotsArray.map((slot, index) => (
+                  <div key={index} className="text-sm">
+                    <span className="font-semibold">
+                      {slot.roomName} ({slot.roomNumber})
+                    </span>
+                    <span className="text-gray-600 ml-2">{slot.time}</span>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+          {/* 全体の余白を調整 */}
+          {/* -- グループ2: 予約情報 -- */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-gray-500 border-b pb-2">
               予約情報
@@ -130,7 +152,7 @@ export function ReservationDialog({
               </div>
             </div>
           </div>
-          {/* -- グループ2: 予約者情報 -- */}
+          {/* -- グループ3: 予約者情報 -- */}
           <div className="space-y-4">
             {/* <h3 className="text-sm font-semibold text-gray-500 border-b pb-2">
                       予約詳細
@@ -166,13 +188,20 @@ export function ReservationDialog({
               <Input
                 id="numberOfUsers"
                 type="number"
+                min="1" // 1未満の数値を入力できないようにする
                 value={numberOfUsers}
-                onChange={(e) => onFormStateChange("number", e.target.value)}
+                onChange={(e) => {
+                  // 数値と空文字列のみを許可する
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value)) {
+                    onFormStateChange("numberOfUsers", value);
+                  }
+                }}
                 placeholder="例: 5"
               />
             </div>
           </div>
-          {/* -- グループ3: 補足情報 -- */}
+          {/* -- グループ4: 補足情報 -- */}
           <div className="space-y-2">
             <Label htmlFor="note">
               備考 <span className="text-gray-500">(任意)</span>

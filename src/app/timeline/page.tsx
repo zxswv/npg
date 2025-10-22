@@ -278,7 +278,7 @@ export default function TimelinePage() {
       <ReservationDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        selectedSlotsSize={selectedSlots.size}
+        selectedSlots={selectedSlots}
         formState={formState}
         onFormStateChange={handleFormStateChange}
         onConfirm={handleConfirmReservation}

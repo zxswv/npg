@@ -19,10 +19,10 @@
   - [docker 操作](#docker-操作)
   - [データベース操作](#データベース操作)
 - [docker 説明](#docker-説明)
-    - [docker-compose.yml と docker-compose-prod.yml 主な違いのまとめ](#docker-composeyml-と-docker-compose-prodyml-主な違いのまとめ)
-    - [docker-compose.yml](#docker-composeyml)
+  - [docker-compose.yml と docker-compose-prod.yml 主な違いのまとめ](#docker-composeyml-と-docker-compose-prodyml-主な違いのまとめ)
+  - [docker-compose.yml](#docker-composeyml)
 - [](#)
-    - [docker-compose-prod.yml](#docker-compose-prodyml)
+  - [docker-compose-prod.yml](#docker-compose-prodyml)
 - [参考資料](#参考資料)
 
 # 環境構築
@@ -68,12 +68,11 @@ react-icons  //使いたい機能・アイコン
 ・カレンダーで選択した日付の一日前になる # 修正済み
 ・すでに過ぎた時間帯や日にちも予約できてしまう
 ・カレンダーに月や年を素早く切り替えるものが無い
-・カレンダーの月が英語表示のまま
 ・人数が０以下も入れれちゃう
 ・タイムラインのフィルター機能を使うとデザインが変わる
-・最初に読み込まれるタイムラインの表記は当日でデータが一日前になっている
+・最初に読み込まれるタイムラインの表記は当日でデータが一日前になっている # 修正済み
 ・選択した部屋がどこの何時かを予約のホップアップで表示する
-・ログページのログがすべてで申請中/認可/却下の区別。
+・ログページのログがすべてで申請中/認可/却下の区別。 # 修正済み
 ・別の端末で予約した変更がページを再読み込みしないと反映されない
 ```
 
