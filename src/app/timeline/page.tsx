@@ -13,7 +13,6 @@ import {
   CardDescription,
 } from "@/app/components/ui/card";
 import { ReservationTimeline } from "@/app/components/ReservationTimeline/ReservationTimeline"; //セルの中身
-// import { DateSelector } from "@/app/components/timeline/DateSelector"; //カレンダー
 import { FloorFilter } from "@/app/components/timeline//FloorFilter"; //フロアフィルター
 import { ReservationControl } from "@/app/components/timeline/ReservationControl"; //予約実行ボタン部分
 import { ReservationDialog } from "@/app/components/timeline/ReservationDialog"; //予約のホップアップ
@@ -183,7 +182,7 @@ export default function TimelinePage() {
     };
 
     toast.promise(
-      fetch("/api/reservation/bulk", {
+      fetch("/api/reservations/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(reservationData),

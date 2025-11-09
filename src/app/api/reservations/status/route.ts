@@ -1,4 +1,5 @@
-// app/api/reservation/status/route.ts
+// app/api/reservations/status/route.ts
+// 予約のステータス更新（承認・却下）
 
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
