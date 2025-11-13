@@ -59,25 +59,8 @@ enum ReservationStatus {
   PENDING   // 仮予約（申請中）
   APPROVED  // 承認済み
   REJECTED  // 却下済み
+  CANCELLED // キャンセル済み
 }
-
-// シンプルな予約モデルを定義
-// model Reservation {
-//   id         String   @id @default(uuid()) // 予約のID（UUID形式）
-//   personName String   // 予約者の名前
-//   note       String?  // 備考など 
-//   // どの部屋を予約したか
-//   room       Room     @relation(fields: [roomId], references: [id]) // 部屋とのリレーション
-//   roomId     Int      // 部屋のID
-//   // いつ予約したか
-//   startTime  DateTime // 予約開始時間 (例: 2025-08-01T13:00:00Z)
-//   endTime    DateTime // 予約終了時間 (例: 2025-08-01T14:00:00Z)
-//   createdAt  DateTime @default(now()) // 予約の作成日時
-//   updatedAt  DateTime @updatedAt // 予約の更新日時
-//   // 同じ部屋の同じ時間帯に重複予約がないようにするための複合ユニーク制約
-//   @@unique([roomId, startTime])
-// }
-
 
 // 部屋モデルを定義
 model Room {

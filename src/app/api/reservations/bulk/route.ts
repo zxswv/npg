@@ -1,4 +1,5 @@
 // npg/src/app/api/reservations/bulk/route.ts
+// 一括予約作成API
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 

@@ -101,7 +101,7 @@ export function ReservationTimeline({
     if (!reservationToCancel) return;
 
     toast.promise(
-      fetch(`/api/reservation/${reservationToCancel.id}`, {
+      fetch(`/api/reservations/${reservationToCancel.id}`, {
         method: "DELETE",
       }).then((res) => {
         if (!res.ok) {
